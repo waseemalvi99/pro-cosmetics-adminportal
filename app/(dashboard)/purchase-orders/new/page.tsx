@@ -35,6 +35,7 @@ const itemSchema = z.object({
 const createOrderSchema = z.object({
   supplierId: z.string().min(1, "Supplier is required"),
   expectedDeliveryDate: z.string().optional(),
+  paymentTermDays: z.string().optional(),
   notes: z.string().optional(),
   items: z.array(itemSchema).min(1, "Add at least one item"),
 });
@@ -57,6 +58,7 @@ export default function NewPurchaseOrderPage() {
     defaultValues: {
       supplierId: "",
       expectedDeliveryDate: "",
+      paymentTermDays: "",
       notes: "",
       items: [{ productId: "", quantity: 1, unitPrice: 0 }],
     },
@@ -97,6 +99,7 @@ export default function NewPurchaseOrderPage() {
       purchaseOrdersApi.create({
         supplierId: Number(data.supplierId),
         expectedDeliveryDate: data.expectedDeliveryDate || undefined,
+        paymentTermDays: data.paymentTermDays ? Number(data.paymentTermDays) : undefined,
         notes: data.notes || undefined,
         items: data.items.map((item) => ({
           productId: Number(item.productId),
@@ -158,13 +161,32 @@ export default function NewPurchaseOrderPage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="expectedDeliveryDate">Expected delivery date</Label>
-              <Input
-                id="expectedDeliveryDate"
-                type="date"
-                {...register("expectedDeliveryDate")}
-              />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="expectedDeliveryDate">Expected delivery date</Label>
+                <Input
+                  id="expectedDeliveryDate"
+                  type="date"
+                  {...register("expectedDeliveryDate")}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="paymentTermDays">Payment Term Days</Label>
+                <Input
+                  id="paymentTermDays"
+                  type="number"
+                  min="0"
+                  {...register("paymentTermDays")}
+                  placeholder={(() => {
+                    const sid = watch("supplierId");
+                    const s = suppliers.find((sup: SupplierDto) => String(sup.id) === sid);
+                    return s ? `${s.paymentTermDays} (supplier default)` : "Uses supplier default";
+                  })()}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Leave empty to use supplier&apos;s default
+                </p>
+              </div>
             </div>
 
             <div className="space-y-2">

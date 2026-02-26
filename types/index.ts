@@ -195,6 +195,8 @@ export interface CustomerDto {
   address: string;
   city: string;
   notes: string;
+  creditDays: number;
+  creditLimit: number;
   isActive: boolean;
   createdAt: string;
 }
@@ -206,6 +208,8 @@ export interface CreateCustomerRequest {
   address?: string;
   city?: string;
   notes?: string;
+  creditDays?: number;
+  creditLimit?: number;
 }
 
 export interface UpdateCustomerRequest {
@@ -215,6 +219,8 @@ export interface UpdateCustomerRequest {
   address?: string;
   city?: string;
   notes?: string;
+  creditDays?: number;
+  creditLimit?: number;
   isActive: boolean;
 }
 
@@ -227,6 +233,7 @@ export interface SupplierDto {
   phone: string;
   address: string;
   notes: string | null;
+  paymentTermDays: number;
   isActive: boolean;
   createdAt: string;
 }
@@ -238,6 +245,7 @@ export interface CreateSupplierRequest {
   phone?: string;
   address?: string;
   notes?: string;
+  paymentTermDays?: number;
 }
 
 export interface UpdateSupplierRequest {
@@ -247,6 +255,7 @@ export interface UpdateSupplierRequest {
   phone?: string;
   address?: string;
   notes?: string;
+  paymentTermDays?: number;
   isActive: boolean;
 }
 
@@ -258,6 +267,8 @@ export interface PurchaseOrderDto {
   orderNumber: string;
   orderDate: string;
   expectedDeliveryDate: string;
+  paymentTermDays: number;
+  dueDate: string | null;
   status: string;
   totalAmount: number;
   notes: string | null;
@@ -278,6 +289,7 @@ export interface PurchaseOrderItemDto {
 export interface CreatePurchaseOrderRequest {
   supplierId: number;
   expectedDeliveryDate?: string;
+  paymentTermDays?: number | null;
   notes?: string;
   items: CreatePurchaseOrderItemRequest[];
 }
@@ -332,6 +344,7 @@ export interface SaleDto {
   salesmanId: number | null;
   salesmanName: string | null;
   saleDate: string;
+  dueDate: string | null;
   subTotal: number;
   discount: number;
   tax: number;
@@ -513,12 +526,187 @@ export interface FinancialSummaryDto {
   totalPurchases: number;
 }
 
+// Ledger
+export interface LedgerEntryDto {
+  id: number;
+  entryDate: string;
+  accountType: string;
+  customerId: number | null;
+  customerName: string | null;
+  supplierId: number | null;
+  supplierName: string | null;
+  referenceType: string;
+  referenceId: number;
+  description: string;
+  debitAmount: number;
+  creditAmount: number;
+  isReversed: boolean;
+  createdAt: string;
+}
+
+export interface CreateManualLedgerEntryRequest {
+  accountType: number;
+  customerId?: number | null;
+  supplierId?: number | null;
+  description: string;
+  debitAmount: number;
+  creditAmount: number;
+}
+
+// Payments
+export interface PaymentDto {
+  id: number;
+  receiptNumber: string;
+  paymentType: string;
+  customerId: number | null;
+  customerName: string | null;
+  supplierId: number | null;
+  supplierName: string | null;
+  paymentDate: string;
+  amount: number;
+  paymentMethod: string;
+  chequeNumber: string | null;
+  bankName: string | null;
+  chequeDate: string | null;
+  bankAccountReference: string | null;
+  notes: string | null;
+  createdAt: string;
+}
+
+export interface CreateCustomerPaymentRequest {
+  customerId: number;
+  amount: number;
+  paymentMethod: number;
+  chequeNumber?: string | null;
+  bankName?: string | null;
+  chequeDate?: string | null;
+  bankAccountReference?: string | null;
+  notes?: string;
+}
+
+export interface CreateSupplierPaymentRequest {
+  supplierId: number;
+  amount: number;
+  paymentMethod: number;
+  chequeNumber?: string | null;
+  bankName?: string | null;
+  chequeDate?: string | null;
+  bankAccountReference?: string | null;
+  notes?: string;
+}
+
+// Credit/Debit Notes
+export interface CreditDebitNoteDto {
+  id: number;
+  noteNumber: string;
+  noteType: string;
+  accountType: string;
+  customerId: number | null;
+  customerName: string | null;
+  supplierId: number | null;
+  supplierName: string | null;
+  noteDate: string;
+  amount: number;
+  reason: string;
+  saleId: number | null;
+  saleNumber: string | null;
+  purchaseOrderId: number | null;
+  purchaseOrderNumber: string | null;
+  createdAt: string;
+}
+
+export interface CreateCreditDebitNoteRequest {
+  noteType: number;
+  accountType: number;
+  customerId?: number | null;
+  supplierId?: number | null;
+  amount: number;
+  reason: string;
+  saleId?: number | null;
+  purchaseOrderId?: number | null;
+}
+
+// Account Statements
+export interface AccountStatementDto {
+  accountId: number;
+  accountName: string;
+  accountType: string;
+  fromDate: string;
+  toDate: string;
+  openingBalance: number;
+  totalDebits: number;
+  totalCredits: number;
+  closingBalance: number;
+  lines: AccountStatementLineDto[];
+}
+
+export interface AccountStatementLineDto {
+  id: number;
+  entryDate: string;
+  referenceType: string;
+  referenceId: number;
+  description: string;
+  debitAmount: number;
+  creditAmount: number;
+  runningBalance: number;
+}
+
+// Aging Reports
+export interface AgingReportDto {
+  reportType: string;
+  asOfDate: string;
+  totalCurrent: number;
+  total1To30: number;
+  total31To60: number;
+  total61To90: number;
+  totalOver90: number;
+  grandTotal: number;
+  details: AgingReportDetailDto[];
+}
+
+export interface AgingReportDetailDto {
+  accountId: number;
+  accountName: string;
+  current: number;
+  days1To30: number;
+  days31To60: number;
+  days61To90: number;
+  over90Days: number;
+  total: number;
+}
+
 // Enums
 export const PaymentMethods = [
   { value: 0, label: "Cash" },
   { value: 1, label: "Card" },
   { value: 2, label: "Bank Transfer" },
   { value: 3, label: "Credit" },
+] as const;
+
+export const LedgerPaymentMethods = [
+  { value: 0, label: "Cash" },
+  { value: 1, label: "Cheque" },
+  { value: 2, label: "Bank Transfer" },
+] as const;
+
+export const LedgerAccountTypes = [
+  { value: 0, label: "Customer Receivable" },
+  { value: 1, label: "Supplier Payable" },
+] as const;
+
+export const PaymentTypes = [
+  { value: 0, label: "Customer Receipt" },
+  { value: 1, label: "Supplier Payment" },
+] as const;
+
+export const NoteTypes = [
+  { value: 0, label: "Credit Note" },
+  { value: 1, label: "Debit Note" },
+] as const;
+
+export const NoteAccountTypes = [
+  { value: 0, label: "Customer" },
+  { value: 1, label: "Supplier" },
 ] as const;
 
 export const SaleStatuses = ["Completed", "Pending", "Cancelled", "Refunded"] as const;

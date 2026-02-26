@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, FileSpreadsheet } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -171,6 +171,12 @@ export default function CustomersPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="icon-sm" asChild title="Account Statement">
+                            <Link href={`/accounts/customer/${customer.id}`}>
+                              <FileSpreadsheet className="h-4 w-4" />
+                              <span className="sr-only">Statement</span>
+                            </Link>
+                          </Button>
                           <Button variant="ghost" size="icon-sm" asChild>
                             <Link href={`/customers/${customer.id}/edit`}>
                               <Pencil className="h-4 w-4" />

@@ -192,6 +192,18 @@ export default function SaleDetailPage() {
               <p className="text-sm text-muted-foreground">Payment Method</p>
               <p className="font-medium">{sale.paymentMethod}</p>
             </div>
+            {sale.dueDate && (
+              <div>
+                <p className="text-sm text-muted-foreground">Due Date</p>
+                <p className="font-medium">
+                  {new Date(sale.dueDate).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
+              </div>
+            )}
           </div>
           {sale.notes && (
             <div>

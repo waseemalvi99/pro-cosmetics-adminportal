@@ -32,6 +32,13 @@ const routeLabels: Record<string, string> = {
   users: "Users",
   roles: "Roles & Permissions",
   notifications: "Notifications",
+  ledger: "Ledger",
+  payments: "Payments",
+  "credit-debit-notes": "Credit/Debit Notes",
+  accounts: "Accounts",
+  aging: "Aging Reports",
+  customer: "Customer",
+  supplier: "Supplier",
   new: "New",
   edit: "Edit",
 };

@@ -262,6 +262,16 @@ export default function PurchaseOrderDetailPage() {
               <p className="text-sm text-muted-foreground">Total Amount</p>
               <p className="font-display text-lg font-semibold">{formatCurrency(order.totalAmount)}</p>
             </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Payment Terms</p>
+              <p className="font-medium">{order.paymentTermDays} days</p>
+            </div>
+            {order.dueDate && (
+              <div>
+                <p className="text-sm text-muted-foreground">Due Date</p>
+                <p className="font-medium">{formatDate(order.dueDate)}</p>
+              </div>
+            )}
           </div>
           {order.notes && (
             <div className="mt-4 rounded-lg bg-muted/50 p-3">

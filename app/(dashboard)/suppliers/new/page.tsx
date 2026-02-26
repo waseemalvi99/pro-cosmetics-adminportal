@@ -22,6 +22,7 @@ const createSupplierSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   notes: z.string().optional(),
+  paymentTermDays: z.coerce.number().min(0).optional(),
 });
 
 type CreateSupplierForm = z.infer<typeof createSupplierSchema>;
@@ -43,6 +44,7 @@ export default function NewSupplierPage() {
       phone: "",
       address: "",
       notes: "",
+      paymentTermDays: 0,
     },
   });
 
@@ -55,6 +57,7 @@ export default function NewSupplierPage() {
         phone: data.phone || undefined,
         address: data.address || undefined,
         notes: data.notes || undefined,
+        paymentTermDays: data.paymentTermDays || 0,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
@@ -139,6 +142,20 @@ export default function NewSupplierPage() {
                 placeholder="Main distributor"
                 rows={3}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="paymentTermDays">Payment Term Days</Label>
+              <Input
+                id="paymentTermDays"
+                type="number"
+                min="0"
+                {...register("paymentTermDays")}
+                placeholder="0"
+              />
+              <p className="text-xs text-muted-foreground">
+                Default payment terms in days for POs from this supplier (0 = due on receipt)
+              </p>
             </div>
 
             <div className="flex gap-4">

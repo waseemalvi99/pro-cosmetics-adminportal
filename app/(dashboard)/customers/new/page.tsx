@@ -22,6 +22,8 @@ const createCustomerSchema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
   notes: z.string().optional(),
+  creditDays: z.coerce.number().min(0).optional(),
+  creditLimit: z.coerce.number().min(0).optional(),
 });
 
 type CreateCustomerForm = z.infer<typeof createCustomerSchema>;
@@ -43,6 +45,8 @@ export default function NewCustomerPage() {
       address: "",
       city: "",
       notes: "",
+      creditDays: 0,
+      creditLimit: 0,
     },
   });
 
@@ -55,6 +59,8 @@ export default function NewCustomerPage() {
         address: data.address || undefined,
         city: data.city || undefined,
         notes: data.notes || undefined,
+        creditDays: data.creditDays || 0,
+        creditLimit: data.creditLimit || 0,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
@@ -135,6 +141,36 @@ export default function NewCustomerPage() {
                 placeholder="Additional notes..."
                 rows={3}
               />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="creditDays">Credit Days</Label>
+                <Input
+                  id="creditDays"
+                  type="number"
+                  min="0"
+                  {...register("creditDays")}
+                  placeholder="0"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Days before payment is due (0 = no credit)
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="creditLimit">Credit Limit (QAR)</Label>
+                <Input
+                  id="creditLimit"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  {...register("creditLimit")}
+                  placeholder="0.00"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Max outstanding balance (0 = no limit)
+                </p>
+              </div>
             </div>
 
             <div className="flex gap-4">

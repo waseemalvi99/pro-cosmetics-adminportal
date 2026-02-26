@@ -20,6 +20,10 @@ import {
   Bell,
   ChevronDown,
   LogOut,
+  BookOpen,
+  Receipt,
+  FileText,
+  Clock,
 } from "lucide-react";
 import {
   Sidebar,
@@ -75,6 +79,15 @@ const navigation = [
       { title: "Customers", href: "/customers", icon: Users },
       { title: "Suppliers", href: "/suppliers", icon: ClipboardList },
       { title: "Purchase Orders", href: "/purchase-orders", icon: ClipboardList },
+    ],
+  },
+  {
+    label: "Finance",
+    items: [
+      { title: "Ledger", href: "/ledger", icon: BookOpen },
+      { title: "Payments", href: "/payments", icon: Receipt },
+      { title: "Credit/Debit Notes", href: "/credit-debit-notes", icon: FileText },
+      { title: "Aging Reports", href: "/accounts/aging", icon: Clock },
     ],
   },
   {

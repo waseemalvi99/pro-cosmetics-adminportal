@@ -24,6 +24,7 @@ const editSupplierSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   notes: z.string().optional(),
+  paymentTermDays: z.coerce.number().min(0).optional(),
   isActive: z.boolean(),
 });
 
@@ -59,6 +60,7 @@ export default function EditSupplierPage() {
           phone: supplier.phone || "",
           address: supplier.address || "",
           notes: supplier.notes || "",
+          paymentTermDays: supplier.paymentTermDays ?? 0,
           isActive: supplier.isActive,
         }
       : undefined,
@@ -69,6 +71,7 @@ export default function EditSupplierPage() {
       phone: "",
       address: "",
       notes: "",
+      paymentTermDays: 0,
       isActive: true,
     },
   });
@@ -84,6 +87,7 @@ export default function EditSupplierPage() {
         phone: data.phone || undefined,
         address: data.address || undefined,
         notes: data.notes || undefined,
+        paymentTermDays: data.paymentTermDays || 0,
         isActive: data.isActive,
       }),
     onSuccess: () => {
@@ -195,6 +199,20 @@ export default function EditSupplierPage() {
                 placeholder="Main distributor"
                 rows={3}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="paymentTermDays">Payment Term Days</Label>
+              <Input
+                id="paymentTermDays"
+                type="number"
+                min="0"
+                {...register("paymentTermDays")}
+                placeholder="0"
+              />
+              <p className="text-xs text-muted-foreground">
+                Default payment terms in days for POs from this supplier (0 = due on receipt)
+              </p>
             </div>
 
             <div className="flex items-center space-x-2">
