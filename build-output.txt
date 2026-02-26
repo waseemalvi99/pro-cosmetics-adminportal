@@ -1,0 +1,1199 @@
+
+> admin-portal@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+
+ΓÜá The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 47 errors:
+./app/(dashboard)/products/page.tsx:141:12
+Parsing ecmascript source code failed
+  139 |               Add Product
+  140 |             </Link>
+> 141 |           />
+      |            ^
+  142 |         }
+  143 |       />
+  144 |
+
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+
+
+./app/(dashboard)/products/page.tsx:143:8
+Parsing ecmascript source code failed
+  141 |           />
+  142 |         }
+> 143 |       />
+      |        ^
+  144 |
+  145 |       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+  146 |         <div className="relative flex-1">
+
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+
+
+./app/(dashboard)/products/page.tsx:142:9
+Parsing ecmascript source code failed
+  140 |             </Link>
+  141 |           />
+> 142 |         }
+      |         ^
+  143 |       />
+  144 |
+  145 |       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+
+
+./app/(auth)/login/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  4 | import { useRouter } from "next/navigation";
+  5 | import { useForm } from "react-hook-form";
+> 6 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { z } from "zod";
+  8 | import Image from "next/image";
+  9 | import { Eye, EyeOff, Loader2 } from "lucide-react";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(auth)/login/page.tsx [Client Component Browser]
+    ./app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(auth)/login/page.tsx [Client Component SSR]
+    ./app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/categories/[id]/edit/page.tsx:7:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+   5 | import { useEffect } from "react";
+   6 | import { useForm } from "react-hook-form";
+>  7 | import { zodResolver } from "@hookform/resolvers/zod";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | import { z } from "zod";
+   9 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+  10 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/categories/new/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  4 | import Link from "next/link";
+  5 | import { useForm } from "react-hook-form";
+> 6 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+  9 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/categories/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/categories/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/categories/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/categories/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/customers/[id]/edit/page.tsx:5:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  3 | import { useRouter, useParams } from "next/navigation";
+  4 | import { useForm } from "react-hook-form";
+> 5 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { z } from "zod";
+  7 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+  8 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/customers/new/page.tsx:5:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  3 | import { useRouter } from "next/navigation";
+  4 | import { useForm } from "react-hook-form";
+> 5 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { z } from "zod";
+  7 | import { useMutation } from "@tanstack/react-query";
+  8 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/customers/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/customers/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/customers/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/customers/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/delivery-men/[id]/edit/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  4 | import Link from "next/link";
+  5 | import { useForm } from "react-hook-form";
+> 6 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+  9 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/delivery-men/new/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  4 | import Link from "next/link";
+  5 | import { useForm } from "react-hook-form";
+> 6 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQueryClient } from "@tanstack/react-query";
+  9 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/delivery-men/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/delivery-men/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/delivery-men/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/delivery-men/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/products/[id]/edit/page.tsx:7:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+   5 | import { useEffect } from "react";
+   6 | import { useForm } from "react-hook-form";
+>  7 | import { zodResolver } from "@hookform/resolvers/zod";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | import { z } from "zod";
+   9 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+  10 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/products/new/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  4 | import Link from "next/link";
+  5 | import { useForm } from "react-hook-form";
+> 6 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { z } from "zod";
+  8 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+  9 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/products/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/products/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/products/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/products/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/salesmen/[id]/edit/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  4 | import Link from "next/link";
+  5 | import { useForm } from "react-hook-form";
+> 6 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+  9 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/salesmen/new/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  4 | import Link from "next/link";
+  5 | import { useForm } from "react-hook-form";
+> 6 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQueryClient } from "@tanstack/react-query";
+  9 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/salesmen/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/salesmen/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/salesmen/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/salesmen/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/suppliers/[id]/edit/page.tsx:5:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  3 | import { useRouter, useParams } from "next/navigation";
+  4 | import { useForm } from "react-hook-form";
+> 5 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { z } from "zod";
+  7 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+  8 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/suppliers/new/page.tsx:5:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+  3 | import { useRouter } from "next/navigation";
+  4 | import { useForm } from "react-hook-form";
+> 5 | import { zodResolver } from "@hookform/resolvers/zod";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { z } from "zod";
+  7 | import { useMutation } from "@tanstack/react-query";
+  8 | import { toast } from "sonner";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/suppliers/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/suppliers/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/suppliers/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/suppliers/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/categories/[id]/edit/page.tsx:9:1
+Module not found: Can't resolve '@tanstack/react-query'
+   7 | import { zodResolver } from "@hookform/resolvers/zod";
+   8 | import { z } from "zod";
+>  9 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  10 | import { toast } from "sonner";
+  11 | import { Loader2 } from "lucide-react";
+  12 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/categories/new/page.tsx:8:1
+Module not found: Can't resolve '@tanstack/react-query'
+   6 | import { zodResolver } from "@hookform/resolvers/zod";
+   7 | import { z } from "zod";
+>  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | import { toast } from "sonner";
+  10 | import { Loader2 } from "lucide-react";
+  11 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/categories/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/categories/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/categories/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/categories/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/categories/page.tsx:5:1
+Module not found: Can't resolve '@tanstack/react-query'
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { toast } from "sonner";
+  7 | import { MoreHorizontal, Pencil, Trash2, Plus } from "lucide-react";
+  8 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/categories/page.tsx [Client Component Browser]
+    ./app/(dashboard)/categories/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/categories/page.tsx [Client Component SSR]
+    ./app/(dashboard)/categories/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/customers/[id]/edit/page.tsx:7:1
+Module not found: Can't resolve '@tanstack/react-query'
+   5 | import { zodResolver } from "@hookform/resolvers/zod";
+   6 | import { z } from "zod";
+>  7 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | import { toast } from "sonner";
+   9 | import { Loader2 } from "lucide-react";
+  10 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/customers/new/page.tsx:7:1
+Module not found: Can't resolve '@tanstack/react-query'
+   5 | import { zodResolver } from "@hookform/resolvers/zod";
+   6 | import { z } from "zod";
+>  7 | import { useMutation } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | import { toast } from "sonner";
+   9 | import { Loader2 } from "lucide-react";
+  10 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/customers/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/customers/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/customers/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/customers/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/customers/page.tsx:5:1
+Module not found: Can't resolve '@tanstack/react-query'
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { toast } from "sonner";
+  7 | import { Plus, Pencil, Trash2, Search } from "lucide-react";
+  8 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/customers/page.tsx [Client Component Browser]
+    ./app/(dashboard)/customers/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/customers/page.tsx [Client Component SSR]
+    ./app/(dashboard)/customers/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/delivery-men/[id]/edit/page.tsx:8:1
+Module not found: Can't resolve '@tanstack/react-query'
+   6 | import { zodResolver } from "@hookform/resolvers/zod";
+   7 | import { z } from "zod";
+>  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | import { toast } from "sonner";
+  10 | import { Loader2 } from "lucide-react";
+  11 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/delivery-men/new/page.tsx:8:1
+Module not found: Can't resolve '@tanstack/react-query'
+   6 | import { zodResolver } from "@hookform/resolvers/zod";
+   7 | import { z } from "zod";
+>  8 | import { useMutation, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | import { toast } from "sonner";
+  10 | import { Loader2 } from "lucide-react";
+  11 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/delivery-men/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/delivery-men/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/delivery-men/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/delivery-men/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/delivery-men/page.tsx:5:1
+Module not found: Can't resolve '@tanstack/react-query'
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { toast } from "sonner";
+  7 | import { MoreHorizontal, Pencil, Trash2, Plus, Search } from "lucide-react";
+  8 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/delivery-men/page.tsx [Client Component Browser]
+    ./app/(dashboard)/delivery-men/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/delivery-men/page.tsx [Client Component SSR]
+    ./app/(dashboard)/delivery-men/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/products/[id]/edit/page.tsx:9:1
+Module not found: Can't resolve '@tanstack/react-query'
+   7 | import { zodResolver } from "@hookform/resolvers/zod";
+   8 | import { z } from "zod";
+>  9 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  10 | import { toast } from "sonner";
+  11 | import { Loader2 } from "lucide-react";
+  12 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/products/new/page.tsx:8:1
+Module not found: Can't resolve '@tanstack/react-query'
+   6 | import { zodResolver } from "@hookform/resolvers/zod";
+   7 | import { z } from "zod";
+>  8 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | import { toast } from "sonner";
+  10 | import { PageHeader } from "@/components/shared/page-header";
+  11 | import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/products/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/products/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/products/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/products/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/salesmen/[id]/edit/page.tsx:8:1
+Module not found: Can't resolve '@tanstack/react-query'
+   6 | import { zodResolver } from "@hookform/resolvers/zod";
+   7 | import { z } from "zod";
+>  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | import { toast } from "sonner";
+  10 | import { Loader2 } from "lucide-react";
+  11 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/salesmen/new/page.tsx:8:1
+Module not found: Can't resolve '@tanstack/react-query'
+   6 | import { zodResolver } from "@hookform/resolvers/zod";
+   7 | import { z } from "zod";
+>  8 | import { useMutation, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 | import { toast } from "sonner";
+  10 | import { Loader2 } from "lucide-react";
+  11 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/salesmen/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/salesmen/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/salesmen/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/salesmen/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/salesmen/page.tsx:5:1
+Module not found: Can't resolve '@tanstack/react-query'
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { toast } from "sonner";
+  7 | import { MoreHorizontal, Pencil, Trash2, Plus, Search } from "lucide-react";
+  8 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/salesmen/page.tsx [Client Component Browser]
+    ./app/(dashboard)/salesmen/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/salesmen/page.tsx [Client Component SSR]
+    ./app/(dashboard)/salesmen/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/suppliers/[id]/edit/page.tsx:7:1
+Module not found: Can't resolve '@tanstack/react-query'
+   5 | import { zodResolver } from "@hookform/resolvers/zod";
+   6 | import { z } from "zod";
+>  7 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | import { toast } from "sonner";
+   9 | import { Loader2 } from "lucide-react";
+  10 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/suppliers/new/page.tsx:7:1
+Module not found: Can't resolve '@tanstack/react-query'
+   5 | import { zodResolver } from "@hookform/resolvers/zod";
+   6 | import { z } from "zod";
+>  7 | import { useMutation } from "@tanstack/react-query";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   8 | import { toast } from "sonner";
+   9 | import { Loader2 } from "lucide-react";
+  10 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/suppliers/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/suppliers/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/suppliers/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/suppliers/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/suppliers/page.tsx:5:1
+Module not found: Can't resolve '@tanstack/react-query'
+  3 | import { useState } from "react";
+  4 | import Link from "next/link";
+> 5 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { toast } from "sonner";
+  7 | import { Plus, Pencil, Trash2, Search } from "lucide-react";
+  8 | import { PageHeader } from "@/components/shared/page-header";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/suppliers/page.tsx [Client Component Browser]
+    ./app/(dashboard)/suppliers/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/suppliers/page.tsx [Client Component SSR]
+    ./app/(dashboard)/suppliers/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./providers/query-provider.tsx:3:1
+Module not found: Can't resolve '@tanstack/react-query'
+  1 | "use client";
+  2 |
+> 3 | import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import { useState, type ReactNode } from "react";
+  5 |
+  6 | export function QueryProvider({ children }: { children: ReactNode }) {
+
+
+
+Import traces:
+  Client Component Browser:
+    ./providers/query-provider.tsx [Client Component Browser]
+    ./app/(dashboard)/layout.tsx [Client Component Browser]
+    ./app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./providers/query-provider.tsx [Client Component SSR]
+    ./app/(dashboard)/layout.tsx [Client Component SSR]
+    ./app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(auth)/login/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+  3 | import { useState } from "react";
+  4 | import { useRouter } from "next/navigation";
+> 5 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { zodResolver } from "@hookform/resolvers/zod";
+  7 | import { z } from "zod";
+  8 | import Image from "next/image";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(auth)/login/page.tsx [Client Component Browser]
+    ./app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(auth)/login/page.tsx [Client Component SSR]
+    ./app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/categories/[id]/edit/page.tsx:6:1
+Module not found: Can't resolve 'react-hook-form'
+  4 | import Link from "next/link";
+  5 | import { useEffect } from "react";
+> 6 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { zodResolver } from "@hookform/resolvers/zod";
+  8 | import { z } from "zod";
+  9 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/categories/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/categories/new/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+  3 | import { useRouter } from "next/navigation";
+  4 | import Link from "next/link";
+> 5 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { zodResolver } from "@hookform/resolvers/zod";
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/categories/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/categories/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/categories/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/categories/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/customers/[id]/edit/page.tsx:4:1
+Module not found: Can't resolve 'react-hook-form'
+  2 |
+  3 | import { useRouter, useParams } from "next/navigation";
+> 4 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { zodResolver } from "@hookform/resolvers/zod";
+  6 | import { z } from "zod";
+  7 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/customers/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/customers/new/page.tsx:4:1
+Module not found: Can't resolve 'react-hook-form'
+  2 |
+  3 | import { useRouter } from "next/navigation";
+> 4 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { zodResolver } from "@hookform/resolvers/zod";
+  6 | import { z } from "zod";
+  7 | import { useMutation } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/customers/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/customers/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/customers/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/customers/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/delivery-men/[id]/edit/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+  3 | import { useRouter, useParams } from "next/navigation";
+  4 | import Link from "next/link";
+> 5 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { zodResolver } from "@hookform/resolvers/zod";
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/delivery-men/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/delivery-men/new/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+  3 | import { useRouter } from "next/navigation";
+  4 | import Link from "next/link";
+> 5 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { zodResolver } from "@hookform/resolvers/zod";
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/delivery-men/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/delivery-men/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/delivery-men/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/delivery-men/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/products/[id]/edit/page.tsx:6:1
+Module not found: Can't resolve 'react-hook-form'
+  4 | import Link from "next/link";
+  5 | import { useEffect } from "react";
+> 6 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  7 | import { zodResolver } from "@hookform/resolvers/zod";
+  8 | import { z } from "zod";
+  9 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/products/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/products/new/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+  3 | import { useRouter } from "next/navigation";
+  4 | import Link from "next/link";
+> 5 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { zodResolver } from "@hookform/resolvers/zod";
+  7 | import { z } from "zod";
+  8 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/products/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/products/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/products/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/products/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/salesmen/[id]/edit/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+  3 | import { useRouter, useParams } from "next/navigation";
+  4 | import Link from "next/link";
+> 5 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { zodResolver } from "@hookform/resolvers/zod";
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/salesmen/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/salesmen/new/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+  3 | import { useRouter } from "next/navigation";
+  4 | import Link from "next/link";
+> 5 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import { zodResolver } from "@hookform/resolvers/zod";
+  7 | import { z } from "zod";
+  8 | import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/salesmen/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/salesmen/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/salesmen/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/salesmen/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/suppliers/[id]/edit/page.tsx:4:1
+Module not found: Can't resolve 'react-hook-form'
+  2 |
+  3 | import { useRouter, useParams } from "next/navigation";
+> 4 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { zodResolver } from "@hookform/resolvers/zod";
+  6 | import { z } from "zod";
+  7 | import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Client Component Browser]
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Client Component SSR]
+    ./app/(dashboard)/suppliers/[id]/edit/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/(dashboard)/suppliers/new/page.tsx:4:1
+Module not found: Can't resolve 'react-hook-form'
+  2 |
+  3 | import { useRouter } from "next/navigation";
+> 4 | import { useForm } from "react-hook-form";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { zodResolver } from "@hookform/resolvers/zod";
+  6 | import { z } from "zod";
+  7 | import { useMutation } from "@tanstack/react-query";
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/suppliers/new/page.tsx [Client Component Browser]
+    ./app/(dashboard)/suppliers/new/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/suppliers/new/page.tsx [Client Component SSR]
+    ./app/(dashboard)/suppliers/new/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./app/(dashboard)/products/page.tsx:141:12)
+    at <unknown> (./app/(dashboard)/products/page.tsx:143:8)
+    at <unknown> (./app/(dashboard)/products/page.tsx:142:9)
+    at <unknown> (./app/(auth)/login/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/categories/[id]/edit/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/categories/new/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/customers/[id]/edit/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/customers/new/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/delivery-men/[id]/edit/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/delivery-men/new/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/products/[id]/edit/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/products/new/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/salesmen/[id]/edit/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/salesmen/new/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/suppliers/[id]/edit/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/suppliers/new/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/categories/[id]/edit/page.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/categories/new/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/categories/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/customers/[id]/edit/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/customers/new/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/customers/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/delivery-men/[id]/edit/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/delivery-men/new/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/delivery-men/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/products/[id]/edit/page.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/products/new/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/salesmen/[id]/edit/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/salesmen/new/page.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/salesmen/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/suppliers/[id]/edit/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/suppliers/new/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/suppliers/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./providers/query-provider.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(auth)/login/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/categories/[id]/edit/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/categories/new/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/customers/[id]/edit/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/customers/new/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/delivery-men/[id]/edit/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/delivery-men/new/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/products/[id]/edit/page.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/products/new/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/salesmen/[id]/edit/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/salesmen/new/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/suppliers/[id]/edit/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/(dashboard)/suppliers/new/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
