@@ -23,6 +23,7 @@ import {
   BookOpen,
   Receipt,
   FileText,
+  FileSpreadsheet,
   Clock,
 } from "lucide-react";
 import {
@@ -87,6 +88,7 @@ const navigation = [
       { title: "Ledger", href: "/ledger", icon: BookOpen },
       { title: "Payments", href: "/payments", icon: Receipt },
       { title: "Credit/Debit Notes", href: "/credit-debit-notes", icon: FileText },
+      { title: "Account Statements", href: "/accounts", icon: FileSpreadsheet },
       { title: "Aging Reports", href: "/accounts/aging", icon: Clock },
     ],
   },
