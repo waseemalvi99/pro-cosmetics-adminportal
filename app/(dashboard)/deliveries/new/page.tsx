@@ -137,14 +137,14 @@ export default function NewDeliveryPage() {
               <div className="space-y-2">
                 <Label htmlFor="deliveryManId">Delivery Man</Label>
                 <Select
-                  value={deliveryManId}
-                  onValueChange={(v) => setValue("deliveryManId", v)}
+                  value={deliveryManId || "none"}
+                  onValueChange={(v) => setValue("deliveryManId", v === "none" ? "" : v)}
                 >
                   <SelectTrigger id="deliveryManId" className="w-full">
                     <SelectValue placeholder="Select delivery man (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {deliveryMen.map((dm) => (
                       <SelectItem key={dm.id} value={String(dm.id)}>
                         {dm.name}

@@ -270,6 +270,7 @@ export interface PurchaseOrderItemDto {
   productId: number;
   productName: string;
   quantity: number;
+  quantityReceived: number;
   unitPrice: number;
   totalPrice: number;
 }

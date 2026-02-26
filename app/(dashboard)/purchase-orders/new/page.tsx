@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
@@ -43,6 +43,7 @@ type CreateOrderForm = z.infer<typeof createOrderSchema>;
 
 export default function NewPurchaseOrderPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -104,6 +105,7 @@ export default function NewPurchaseOrderPage() {
         })),
       }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["purchase-orders"] });
       toast.success("Purchase order created", {
         description: "The order has been created as Draft.",
       });

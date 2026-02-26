@@ -269,7 +269,8 @@ export default function PurchaseOrdersPage() {
                             </Button>
                           )}
                           {(order.status === "Draft" ||
-                            order.status === "Submitted") && (
+                            order.status === "Submitted" ||
+                            order.status === "PartiallyReceived") && (
                             <Button
                               variant="ghost"
                               size="icon-sm"

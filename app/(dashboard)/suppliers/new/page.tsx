@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
@@ -28,6 +28,7 @@ type CreateSupplierForm = z.infer<typeof createSupplierSchema>;
 
 export default function NewSupplierPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -56,6 +57,7 @@ export default function NewSupplierPage() {
         notes: data.notes || undefined,
       }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       toast.success("Supplier created", {
         description: "The supplier has been added successfully.",
       });

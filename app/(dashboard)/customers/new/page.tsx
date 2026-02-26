@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
@@ -28,6 +28,7 @@ type CreateCustomerForm = z.infer<typeof createCustomerSchema>;
 
 export default function NewCustomerPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -56,6 +57,7 @@ export default function NewCustomerPage() {
         notes: data.notes || undefined,
       }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
       toast.success("Customer created", {
         description: "The customer has been added successfully.",
       });

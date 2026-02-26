@@ -19,8 +19,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { reportsApi } from "@/lib/api/reports";
 import { formatCurrency } from "@/lib/utils";
 
-function formatPercent(value: number) {
-  return `${(value <= 1 ? value * 100 : value).toFixed(1)}%`;
+function formatPercent(value: number | null | undefined) {
+  const v = value ?? 0;
+  return `${(v <= 1 ? v * 100 : v).toFixed(1)}%`;
 }
 
 function getDefaultDateRange() {
@@ -439,37 +440,37 @@ export default function ReportsPage() {
                   <Card>
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Total Deliveries</p>
-                      <p className="font-display text-xl font-bold">{deliveries.totalDeliveries}</p>
+                      <p className="font-display text-xl font-bold">{deliveries.totalDeliveries ?? 0}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Delivered</p>
-                      <p className="font-display text-xl font-bold">{deliveries.deliveredCount}</p>
+                      <p className="font-display text-xl font-bold">{deliveries.deliveredCount ?? 0}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Failed</p>
-                      <p className="font-display text-xl font-bold">{deliveries.failedCount}</p>
+                      <p className="font-display text-xl font-bold">{deliveries.failedCount ?? 0}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Pending</p>
-                      <p className="font-display text-xl font-bold">{deliveries.pendingCount}</p>
+                      <p className="font-display text-xl font-bold">{deliveries.pendingCount ?? 0}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Success Rate</p>
-                      <p className="font-display text-xl font-bold">{formatPercent(deliveries.successRate)}</p>
+                      <p className="font-display text-xl font-bold">{formatPercent(deliveries.successRate ?? 0)}</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="pt-4">
                       <p className="text-sm text-muted-foreground">Avg Delivery Time</p>
-                      <p className="font-display text-xl font-bold">{deliveries.averageDeliveryTimeHours.toFixed(1)}h</p>
+                      <p className="font-display text-xl font-bold">{(deliveries.averageDeliveryTimeHours ?? 0).toFixed(1)}h</p>
                     </CardContent>
                   </Card>
                 </div>

@@ -401,14 +401,14 @@ export default function NewSalePage() {
                 <div className="space-y-2">
                   <Label>Customer (optional)</Label>
                   <Select
-                    value={watch("customerId")}
-                    onValueChange={(v) => setValue("customerId", v)}
+                    value={watch("customerId") || "none"}
+                    onValueChange={(v) => setValue("customerId", v === "none" ? "" : v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Walk-in customer" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Walk-in customer</SelectItem>
+                      <SelectItem value="none">Walk-in customer</SelectItem>
                       {customers.map((c) => (
                         <SelectItem key={c.id} value={String(c.id)}>
                           {c.fullName}
@@ -420,14 +420,14 @@ export default function NewSalePage() {
                 <div className="space-y-2">
                   <Label>Salesman (optional)</Label>
                   <Select
-                    value={watch("salesmanId")}
-                    onValueChange={(v) => setValue("salesmanId", v)}
+                    value={watch("salesmanId") || "none"}
+                    onValueChange={(v) => setValue("salesmanId", v === "none" ? "" : v)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select salesman" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value="none">None</SelectItem>
                       {salesmen.map((s) => (
                         <SelectItem key={s.id} value={String(s.id)}>
                           {s.name}
