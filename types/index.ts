@@ -776,6 +776,13 @@ export interface PurchaseOrderComboDto {
   orderDate: string;
 }
 
+// Email
+export interface SendEmailRequest {
+  to: string[];
+  subject: string;
+  body: string;
+}
+
 export const SaleStatuses = ["Completed", "Pending", "Cancelled", "Refunded"] as const;
 export const PurchaseOrderStatuses = ["Draft", "Submitted", "PartiallyReceived", "Received", "Cancelled", "Closed"] as const;
 export const DeliveryStatuses = ["Pending", "Assigned", "PickedUp", "InTransit", "Delivered", "Failed"] as const;

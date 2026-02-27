@@ -25,6 +25,7 @@ import {
   FileText,
   FileSpreadsheet,
   Clock,
+  Mail,
 } from "lucide-react";
 import {
   Sidebar,
@@ -104,6 +105,7 @@ const navigation = [
       { title: "Users", href: "/users", icon: UserCog },
       { title: "Roles & Permissions", href: "/roles", icon: Shield },
       { title: "Notifications", href: "/notifications", icon: Bell },
+      { title: "Send Email", href: "/emails", icon: Mail },
     ],
   },
 ];
