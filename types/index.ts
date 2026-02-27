@@ -163,8 +163,10 @@ export interface ProductBarcodeDto {
   productName: string;
   sku: string;
   barcode: string;
+  costPrice: number;
   salePrice: number;
   quantityOnHand: number;
+  images: ProductImageDto[];
 }
 
 // Inventory
@@ -271,6 +273,8 @@ export interface PurchaseOrderDto {
   dueDate: string | null;
   status: string;
   totalAmount: number;
+  receivedAmount: number;
+  closeReason: string | null;
   notes: string | null;
   createdAt: string;
   items: PurchaseOrderItemDto[];
@@ -307,6 +311,10 @@ export interface ReceivePurchaseOrderRequest {
 export interface ReceivePurchaseOrderItemRequest {
   productId: number;
   quantityReceived: number;
+}
+
+export interface ClosePurchaseOrderRequest {
+  reason?: string;
 }
 
 // Salesmen
@@ -349,6 +357,7 @@ export interface SaleDto {
   discount: number;
   tax: number;
   totalAmount: number;
+  returnedAmount: number;
   paymentMethod: string;
   status: string;
   notes: string | null;
@@ -361,6 +370,7 @@ export interface SaleItemDto {
   productId: number;
   productName: string;
   quantity: number;
+  quantityReturned: number;
   unitPrice: number;
   discount: number;
   totalPrice: number;
@@ -381,6 +391,16 @@ export interface CreateSaleItemRequest {
   quantity: number;
   unitPrice: number;
   discount: number;
+}
+
+export interface SalesReturnRequest {
+  reason?: string;
+  items: SalesReturnItemRequest[];
+}
+
+export interface SalesReturnItemRequest {
+  productId: number;
+  quantityReturned: number;
 }
 
 // Deliveries
@@ -709,6 +729,53 @@ export const NoteAccountTypes = [
   { value: 1, label: "Supplier" },
 ] as const;
 
+// Combo DTOs (lightweight for dropdowns)
+export interface ComboItemDto {
+  id: number;
+  name: string;
+}
+
+export interface CustomerComboDto {
+  id: number;
+  fullName: string;
+  creditLimit: number;
+}
+
+export interface SupplierComboDto {
+  id: number;
+  name: string;
+  paymentTermDays: number;
+}
+
+export interface ProductComboDto {
+  id: number;
+  name: string;
+  sku: string;
+  salePrice: number;
+  quantityOnHand: number;
+  imagePath: string | null;
+}
+
+export interface DeliveryManComboDto {
+  id: number;
+  name: string;
+  isAvailable: boolean;
+}
+
+export interface SaleComboDto {
+  id: number;
+  saleNumber: string;
+  totalAmount: number;
+  saleDate: string;
+}
+
+export interface PurchaseOrderComboDto {
+  id: number;
+  orderNumber: string;
+  totalAmount: number;
+  orderDate: string;
+}
+
 export const SaleStatuses = ["Completed", "Pending", "Cancelled", "Refunded"] as const;
-export const PurchaseOrderStatuses = ["Draft", "Submitted", "PartiallyReceived", "Received", "Cancelled"] as const;
+export const PurchaseOrderStatuses = ["Draft", "Submitted", "PartiallyReceived", "Received", "Cancelled", "Closed"] as const;
 export const DeliveryStatuses = ["Pending", "Assigned", "PickedUp", "InTransit", "Delivered", "Failed"] as const;

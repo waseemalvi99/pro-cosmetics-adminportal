@@ -20,9 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { paymentsApi } from "@/lib/api/payments";
-import { customersApi } from "@/lib/api/customers";
-import type { CustomerDto } from "@/types";
+import { useCustomerCombo } from "@/hooks/use-combo-search";
 import { LedgerPaymentMethods } from "@/types";
 
 const schema = z.object({
@@ -55,11 +55,7 @@ export default function CustomerPaymentPage() {
 
   const paymentMethod = watch("paymentMethod");
 
-  const { data: customersResp } = useQuery({
-    queryKey: ["customers", "all"],
-    queryFn: () => customersApi.list({ page: 1, pageSize: 500 }),
-  });
-  const customers = customersResp?.success && customersResp?.data ? customersResp.data.items : [];
+  const customerCombo = useCustomerCombo();
 
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
@@ -93,14 +89,16 @@ export default function CustomerPaymentPage() {
           <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-6">
             <div className="space-y-2">
               <Label>Customer *</Label>
-              <Select value={watch("customerId")} onValueChange={(v) => setValue("customerId", v)}>
-                <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
-                <SelectContent>
-                  {customers.map((c: CustomerDto) => (
-                    <SelectItem key={c.id} value={String(c.id)}>{c.fullName}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableCombobox
+                options={customerCombo.options}
+                value={watch("customerId")}
+                onValueChange={(v) => setValue("customerId", v)}
+                onSearchChange={customerCombo.setSearch}
+                isLoading={customerCombo.isLoading}
+                placeholder="Select customer"
+                searchPlaceholder="Search customers..."
+                emptyMessage="No customers found."
+              />
               {errors.customerId && <p className="text-sm text-destructive">{errors.customerId.message}</p>}
             </div>
 

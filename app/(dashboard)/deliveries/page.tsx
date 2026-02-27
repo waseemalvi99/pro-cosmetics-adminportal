@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import {
   Pagination,
   PaginationContent,
@@ -33,7 +34,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { deliveriesApi } from "@/lib/api/deliveries";
-import { deliveryMenApi } from "@/lib/api/delivery-men";
+import { useDeliveryManCombo } from "@/hooks/use-combo-search";
 import type { DeliveryDto } from "@/types";
 
 const PAGE_SIZE = 10;
@@ -78,18 +79,11 @@ export default function DeliveriesPage() {
       }),
   });
 
-  const { data: deliveryMenResponse } = useQuery({
-    queryKey: ["delivery-men", "filter"],
-    queryFn: () => deliveryMenApi.list({ pageSize: 100 }),
-  });
+  const deliveryManCombo = useDeliveryManCombo();
 
   const pagedData = response?.success && response?.data ? response.data : null;
   const deliveries: DeliveryDto[] = pagedData?.items ?? [];
   const totalPages = pagedData?.totalPages ?? 0;
-  const deliveryMen =
-    deliveryMenResponse?.success && deliveryMenResponse?.data
-      ? deliveryMenResponse.data.items
-      : [];
 
   return (
     <div className="space-y-6">
@@ -130,25 +124,21 @@ export default function DeliveriesPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Delivery Man:</span>
-              <Select
-                value={deliveryManId}
-                onValueChange={(v) => {
-                  setDeliveryManId(v);
-                  setPage(1);
-                }}
-              >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="All delivery men" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All delivery men</SelectItem>
-                  {deliveryMen.map((dm) => (
-                    <SelectItem key={dm.id} value={String(dm.id)}>
-                      {dm.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="w-[220px]">
+                <SearchableCombobox
+                  options={[{ value: "all", label: "All delivery men" }, ...deliveryManCombo.options]}
+                  value={deliveryManId}
+                  onValueChange={(v) => {
+                    setDeliveryManId(v || "all");
+                    setPage(1);
+                  }}
+                  onSearchChange={deliveryManCombo.setSearch}
+                  isLoading={deliveryManCombo.isLoading}
+                  placeholder="All delivery men"
+                  searchPlaceholder="Search delivery men..."
+                  emptyMessage="No delivery men found."
+                />
+              </div>
             </div>
           </div>
 

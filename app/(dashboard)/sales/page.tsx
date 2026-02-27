@@ -28,13 +28,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import {
   Pagination,
   PaginationContent,
@@ -44,8 +38,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { salesApi } from "@/lib/api/sales";
-import { customersApi } from "@/lib/api/customers";
-import { salesmenApi } from "@/lib/api/salesmen";
+import { useCustomerCombo, useSalesmanCombo } from "@/hooks/use-combo-search";
 import type { SaleDto } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -89,15 +82,8 @@ export default function SalesPage() {
       }),
   });
 
-  const { data: customersResponse } = useQuery({
-    queryKey: ["customers", "filter"],
-    queryFn: () => customersApi.list({ pageSize: 100 }),
-  });
-
-  const { data: salesmenResponse } = useQuery({
-    queryKey: ["salesmen", "filter"],
-    queryFn: () => salesmenApi.list({ pageSize: 100 }),
-  });
+  const customerCombo = useCustomerCombo();
+  const salesmanCombo = useSalesmanCombo();
 
   const cancelMutation = useMutation({
     mutationFn: (id: number) => salesApi.cancel(id),
@@ -120,8 +106,6 @@ export default function SalesPage() {
   const pagedData = response?.success && response?.data ? response.data : null;
   const sales = pagedData?.items ?? [];
   const totalPages = pagedData?.totalPages ?? 0;
-  const customers = customersResponse?.success && customersResponse?.data ? customersResponse.data.items : [];
-  const salesmen = salesmenResponse?.success && salesmenResponse?.data ? salesmenResponse.data.items : [];
 
   const handleCancelConfirm = () => {
     if (cancelTarget) {
@@ -130,7 +114,7 @@ export default function SalesPage() {
   };
 
   const canCancel = (sale: SaleDto) =>
-    sale.status === "Pending" || sale.status === "Completed";
+    (sale.status === "Pending" || sale.status === "Completed") && !(sale.returnedAmount > 0);
 
   return (
     <div className="space-y-6">
@@ -152,35 +136,33 @@ export default function SalesPage() {
           <div className="mb-4 flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Customer:</span>
-              <Select value={customerId} onValueChange={(v) => { setCustomerId(v); setPage(1); }}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="All customers" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All customers</SelectItem>
-                  {customers.map((c) => (
-                    <SelectItem key={c.id} value={String(c.id)}>
-                      {c.fullName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="w-[220px]">
+                <SearchableCombobox
+                  options={[{ value: "all", label: "All customers" }, ...customerCombo.options]}
+                  value={customerId}
+                  onValueChange={(v) => { setCustomerId(v || "all"); setPage(1); }}
+                  onSearchChange={customerCombo.setSearch}
+                  isLoading={customerCombo.isLoading}
+                  placeholder="All customers"
+                  searchPlaceholder="Search customers..."
+                  emptyMessage="No customers found."
+                />
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Salesman:</span>
-              <Select value={salesmanId} onValueChange={(v) => { setSalesmanId(v); setPage(1); }}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="All salesmen" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All salesmen</SelectItem>
-                  {salesmen.map((s) => (
-                    <SelectItem key={s.id} value={String(s.id)}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="w-[220px]">
+                <SearchableCombobox
+                  options={[{ value: "all", label: "All salesmen" }, ...salesmanCombo.options]}
+                  value={salesmanId}
+                  onValueChange={(v) => { setSalesmanId(v || "all"); setPage(1); }}
+                  onSearchChange={salesmanCombo.setSearch}
+                  isLoading={salesmanCombo.isLoading}
+                  placeholder="All salesmen"
+                  searchPlaceholder="Search salesmen..."
+                  emptyMessage="No salesmen found."
+                />
+              </div>
             </div>
           </div>
 
@@ -245,8 +227,13 @@ export default function SalesPage() {
                           minute: "2-digit",
                         })}
                       </TableCell>
-                      <TableCell className="text-right font-medium">
-                        {formatCurrency(sale.totalAmount)}
+                      <TableCell className="text-right">
+                        <span className="font-medium">{formatCurrency(sale.totalAmount)}</span>
+                        {sale.returnedAmount > 0 && (
+                          <span className="block text-xs text-blue-600 dark:text-blue-400">
+                            Returned: {formatCurrency(sale.returnedAmount)}
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell>{sale.paymentMethod}</TableCell>
                       <TableCell>

@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api-client";
-import type { PagedResult, PurchaseOrderDto, CreatePurchaseOrderRequest, ReceivePurchaseOrderRequest } from "@/types";
+import type { PagedResult, PurchaseOrderDto, CreatePurchaseOrderRequest, ReceivePurchaseOrderRequest, ClosePurchaseOrderRequest } from "@/types";
 
 export const purchaseOrdersApi = {
   list: (params?: { page?: number; pageSize?: number; supplierId?: number }) =>
@@ -19,4 +19,7 @@ export const purchaseOrdersApi = {
 
   cancel: (id: number) =>
     apiClient.put<void>(`/api/purchase-orders/${id}/cancel`),
+
+  close: (id: number, data: ClosePurchaseOrderRequest) =>
+    apiClient.put<void>(`/api/purchase-orders/${id}/close`, data),
 };

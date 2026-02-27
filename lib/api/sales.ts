@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api-client";
-import type { PagedResult, SaleDto, CreateSaleRequest } from "@/types";
+import type { PagedResult, SaleDto, CreateSaleRequest, SalesReturnRequest } from "@/types";
 
 export const salesApi = {
   list: (params?: { page?: number; pageSize?: number; customerId?: number; salesmanId?: number }) =>
@@ -13,4 +13,7 @@ export const salesApi = {
 
   cancel: (id: number) =>
     apiClient.put<void>(`/api/sales/${id}/cancel`),
+
+  returnSale: (id: number, data: SalesReturnRequest) =>
+    apiClient.put<void>(`/api/sales/${id}/return`, data),
 };

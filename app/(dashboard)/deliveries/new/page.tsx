@@ -13,17 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
+import type { ComboboxOption } from "@/components/ui/searchable-combobox";
 import { deliveriesApi } from "@/lib/api/deliveries";
 import { salesApi } from "@/lib/api/sales";
-import { deliveryMenApi } from "@/lib/api/delivery-men";
-import type { SaleDto, DeliveryManDto } from "@/types";
+import { useDeliveryManCombo } from "@/hooks/use-combo-search";
+import type { SaleDto } from "@/types";
 
 const createDeliverySchema = z.object({
   saleId: z.string().min(1, "Sale is required"),
@@ -59,20 +54,17 @@ export default function NewDeliveryPage() {
 
   const { data: salesResponse } = useQuery({
     queryKey: ["sales", "create-delivery"],
-    queryFn: () => salesApi.list({ pageSize: 100 }),
+    queryFn: () => salesApi.list({ pageSize: 50 }),
   });
-
-  const { data: deliveryMenResponse } = useQuery({
-    queryKey: ["delivery-men", "create-delivery"],
-    queryFn: () => deliveryMenApi.list({ pageSize: 100 }),
-  });
-
-  const sales: SaleDto[] =
-    salesResponse?.success && salesResponse?.data ? salesResponse.data.items : [];
-  const deliveryMen: DeliveryManDto[] =
-    deliveryMenResponse?.success && deliveryMenResponse?.data
-      ? deliveryMenResponse.data.items
+  const salesOptions: ComboboxOption[] =
+    salesResponse?.success && salesResponse?.data
+      ? salesResponse.data.items.map((sale: SaleDto) => ({
+          value: String(sale.id),
+          label: `${sale.saleNumber} — ${sale.customerName ?? "No customer"}`,
+        }))
       : [];
+
+  const deliveryManCombo = useDeliveryManCombo();
 
   const createMutation = useMutation({
     mutationFn: async (data: CreateDeliveryForm) => {
@@ -117,18 +109,14 @@ export default function NewDeliveryPage() {
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="saleId">Sale *</Label>
-                <Select value={saleId} onValueChange={(v) => setValue("saleId", v)}>
-                  <SelectTrigger id="saleId" className="w-full" aria-invalid={!!errors.saleId}>
-                    <SelectValue placeholder="Select sale" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sales.map((sale) => (
-                      <SelectItem key={sale.id} value={String(sale.id)}>
-                        {sale.saleNumber} — {sale.customerName ?? "No customer"}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableCombobox
+                  options={salesOptions}
+                  value={saleId}
+                  onValueChange={(v) => setValue("saleId", v)}
+                  placeholder="Select sale"
+                  searchPlaceholder="Search sales..."
+                  emptyMessage="No sales found."
+                />
                 {errors.saleId && (
                   <p className="text-sm text-destructive">{errors.saleId.message}</p>
                 )}
@@ -136,22 +124,17 @@ export default function NewDeliveryPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="deliveryManId">Delivery Man</Label>
-                <Select
-                  value={deliveryManId || "none"}
-                  onValueChange={(v) => setValue("deliveryManId", v === "none" ? "" : v)}
-                >
-                  <SelectTrigger id="deliveryManId" className="w-full">
-                    <SelectValue placeholder="Select delivery man (optional)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {deliveryMen.map((dm) => (
-                      <SelectItem key={dm.id} value={String(dm.id)}>
-                        {dm.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableCombobox
+                  options={deliveryManCombo.options}
+                  value={deliveryManId || ""}
+                  onValueChange={(v) => setValue("deliveryManId", v)}
+                  onSearchChange={deliveryManCombo.setSearch}
+                  isLoading={deliveryManCombo.isLoading}
+                  placeholder="Select delivery man (optional)"
+                  searchPlaceholder="Search delivery men..."
+                  emptyMessage="No delivery men found."
+                  clearable
+                />
               </div>
 
               <div className="space-y-2">

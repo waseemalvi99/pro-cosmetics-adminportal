@@ -8,18 +8,16 @@ import {
   Pencil,
   Trash2,
   Search,
+  ImageIcon,
+  Printer,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import {
   Table,
   TableBody,
@@ -49,9 +47,9 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { productsApi } from "@/lib/api/products";
-import { categoriesApi } from "@/lib/api/categories";
-import type { ProductDto, CategoryDto } from "@/types";
-import { formatCurrency } from "@/lib/utils";
+import { useCategoryCombo } from "@/hooks/use-combo-search";
+import type { ProductDto } from "@/types";
+import { formatCurrency, getImageUrl } from "@/lib/utils";
 
 const PAGE_SIZE = 20;
 const DEBOUNCE_MS = 500;
@@ -67,6 +65,8 @@ export default function ProductsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [categoryId, setCategoryId] = useState<string>("all");
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [isPrinting, setIsPrinting] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -87,10 +87,7 @@ export default function ProductsPage() {
       }),
   });
 
-  const { data: categoriesResponse } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => categoriesApi.list(),
-  });
+  const categoryCombo = useCategoryCombo();
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -112,8 +109,6 @@ export default function ProductsPage() {
     productsResponse?.success && productsResponse?.data ? productsResponse.data : null;
   const products = pagedData?.items ?? [];
   const totalPages = pagedData?.totalPages ?? 1;
-  const categories =
-    categoriesResponse?.success && categoriesResponse?.data ? categoriesResponse.data : [];
 
   const handleDelete = useCallback(() => {
     if (deleteId) {
@@ -121,18 +116,67 @@ export default function ProductsPage() {
     }
   }, [deleteId, deleteMutation]);
 
+  const toggleSelect = useCallback((id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    if (selectedIds.size === products.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(products.map((p) => p.id)));
+    }
+  }, [products, selectedIds.size]);
+
+  const handlePrintBarcodes = useCallback(async () => {
+    if (selectedIds.size === 0) {
+      toast.error("Select at least one product to print barcodes.");
+      return;
+    }
+    setIsPrinting(true);
+    try {
+      await productsApi.printBarcodeLabels(Array.from(selectedIds));
+      toast.success("Barcode labels PDF opened in a new tab.");
+    } catch {
+      toast.error("Failed to generate barcode labels.");
+    } finally {
+      setIsPrinting(false);
+    }
+  }, [selectedIds]);
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Products"
         description="Manage your product catalog"
         action={
-          <Button asChild>
-            <Link href="/products/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Product
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            {selectedIds.size > 0 && (
+              <Button
+                variant="outline"
+                onClick={handlePrintBarcodes}
+                disabled={isPrinting}
+              >
+                {isPrinting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Printer className="mr-2 h-4 w-4" />
+                )}
+                Print Barcodes ({selectedIds.size})
+              </Button>
+            )}
+            <Button asChild>
+              <Link href="/products/new">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Product
+              </Link>
+            </Button>
+          </div>
         }
       />
 
@@ -146,19 +190,18 @@ export default function ProductsPage() {
             className="pl-9"
           />
         </div>
-        <Select value={categoryId} onValueChange={(v) => { setCategoryId(v); setPage(1); }}>
-          <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="All categories" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
-            {categories.map((cat: CategoryDto) => (
-              <SelectItem key={cat.id} value={String(cat.id)}>
-                {cat.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="w-full sm:w-[220px]">
+          <SearchableCombobox
+            options={[{ value: "all", label: "All categories" }, ...categoryCombo.options]}
+            value={categoryId}
+            onValueChange={(v) => { setCategoryId(v || "all"); setPage(1); }}
+            onSearchChange={categoryCombo.setSearch}
+            isLoading={categoryCombo.isLoading}
+            placeholder="All categories"
+            searchPlaceholder="Search categories..."
+            emptyMessage="No categories found."
+          />
+        </div>
       </div>
 
       <div className="rounded-lg border">
@@ -194,6 +237,14 @@ export default function ProductsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[40px]">
+                    <Checkbox
+                      checked={products.length > 0 && selectedIds.size === products.length}
+                      onCheckedChange={toggleSelectAll}
+                      aria-label="Select all"
+                    />
+                  </TableHead>
+                  <TableHead className="w-[60px]"></TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>SKU</TableHead>
                   <TableHead>Category</TableHead>
@@ -205,8 +256,30 @@ export default function ProductsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {products.map((product: ProductDto) => (
-                  <TableRow key={product.id}>
+                {products.map((product: ProductDto) => {
+                  const primaryImage = product.images?.find((img) => img.isPrimary) ?? product.images?.[0];
+                  return (
+                  <TableRow key={product.id} data-state={selectedIds.has(product.id) ? "selected" : undefined}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedIds.has(product.id)}
+                        onCheckedChange={() => toggleSelect(product.id)}
+                        aria-label={`Select ${product.name}`}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {primaryImage ? (
+                        <img
+                          src={getImageUrl(primaryImage.url)}
+                          alt={product.name}
+                          className="h-10 w-10 rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-muted">
+                          <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell className="text-muted-foreground">
                       {product.sku || "—"}
@@ -264,7 +337,8 @@ export default function ProductsPage() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
 

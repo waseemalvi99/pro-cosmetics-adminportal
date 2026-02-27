@@ -33,9 +33,19 @@ export const productsApi = {
   uploadImage: (productId: number, formData: FormData) =>
     apiClient.upload<ProductImageDto>(`/api/products/${productId}/images`, formData),
 
+  uploadImagesBulk: (productId: number, formData: FormData) =>
+    apiClient.upload<ProductImageDto[]>(`/api/products/${productId}/images/bulk`, formData),
+
   deleteImage: (productId: number, imageId: number) =>
     apiClient.delete<void>(`/api/products/${productId}/images/${imageId}`),
 
   setPrimaryImage: (productId: number, imageId: number) =>
     apiClient.put<void>(`/api/products/${productId}/images/${imageId}/primary`),
+
+  printBarcodeLabels: async (productIds: number[]) => {
+    const blob = await apiClient.postBlob("/api/products/barcode-labels", { productIds });
+    const url = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+    window.open(url, "_blank");
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  },
 };

@@ -40,7 +40,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { usersApi } from "@/lib/api/users";
-import { rolesApi } from "@/lib/api/roles";
+import { useRoleCombo } from "@/hooks/use-combo-search";
 import type { UserDto } from "@/types";
 
 const PAGE_SIZE = 10;
@@ -56,10 +56,7 @@ export default function UsersPage() {
       usersApi.list({ page, pageSize: PAGE_SIZE, search: search || undefined }),
   });
 
-  const { data: rolesResponse } = useQuery({
-    queryKey: ["roles"],
-    queryFn: () => rolesApi.list(),
-  });
+  const roleCombo = useRoleCombo();
 
   const toggleActiveMutation = useMutation({
     mutationFn: (id: number) => usersApi.toggleActive(id),
@@ -95,8 +92,6 @@ export default function UsersPage() {
   const pagedData = response?.success && response?.data ? response.data : null;
   const users = pagedData?.items ?? [];
   const totalPages = pagedData?.totalPages ?? 0;
-  const roles =
-    rolesResponse?.success && rolesResponse?.data ? rolesResponse.data : [];
 
   const formatDate = (dateStr: string) => {
     try {
@@ -216,9 +211,9 @@ export default function UsersPage() {
                               <SelectValue placeholder="Assign Role" />
                             </SelectTrigger>
                             <SelectContent>
-                              {roles.map((role) => (
-                                <SelectItem key={role.id} value={role.name}>
-                                  {role.name}
+                              {roleCombo.options.map((role) => (
+                                <SelectItem key={role.value} value={role.label}>
+                                  {role.label}
                                 </SelectItem>
                               ))}
                             </SelectContent>

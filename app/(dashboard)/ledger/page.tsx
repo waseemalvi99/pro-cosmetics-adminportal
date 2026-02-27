@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import {
   Dialog,
   DialogContent,
@@ -46,10 +47,9 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { ledgerApi } from "@/lib/api/ledger";
-import { customersApi } from "@/lib/api/customers";
-import { suppliersApi } from "@/lib/api/suppliers";
+import { useCustomerCombo, useSupplierCombo } from "@/hooks/use-combo-search";
 import { formatCurrency } from "@/lib/utils";
-import type { CustomerDto, SupplierDto, LedgerEntryDto } from "@/types";
+import type { LedgerEntryDto } from "@/types";
 import { LedgerAccountTypes } from "@/types";
 
 const PAGE_SIZE = 20;
@@ -107,18 +107,8 @@ export default function LedgerPage() {
       }),
   });
 
-  const { data: customersResp } = useQuery({
-    queryKey: ["customers", "all"],
-    queryFn: () => customersApi.list({ page: 1, pageSize: 500 }),
-  });
-
-  const { data: suppliersResp } = useQuery({
-    queryKey: ["suppliers", "all"],
-    queryFn: () => suppliersApi.list({ page: 1, pageSize: 500 }),
-  });
-
-  const customers = customersResp?.success && customersResp?.data ? customersResp.data.items : [];
-  const suppliers = suppliersResp?.success && suppliersResp?.data ? suppliersResp.data.items : [];
+  const customerCombo = useCustomerCombo();
+  const supplierCombo = useSupplierCombo();
 
   const pagedData = response?.success && response?.data ? response.data : null;
   const entries = pagedData?.items ?? [];
@@ -199,28 +189,32 @@ export default function LedgerPage() {
                 {accountType === "0" && (
                   <div className="space-y-2">
                     <Label>Customer *</Label>
-                    <Select value={watch("customerId") ?? ""} onValueChange={(v) => setValue("customerId", v)}>
-                      <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
-                      <SelectContent>
-                        {customers.map((c: CustomerDto) => (
-                          <SelectItem key={c.id} value={String(c.id)}>{c.fullName}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <SearchableCombobox
+                      options={customerCombo.options}
+                      value={watch("customerId") ?? ""}
+                      onValueChange={(v) => setValue("customerId", v)}
+                      onSearchChange={customerCombo.setSearch}
+                      isLoading={customerCombo.isLoading}
+                      placeholder="Select customer"
+                      searchPlaceholder="Search customers..."
+                      emptyMessage="No customers found."
+                    />
                   </div>
                 )}
 
                 {accountType === "1" && (
                   <div className="space-y-2">
                     <Label>Supplier *</Label>
-                    <Select value={watch("supplierId") ?? ""} onValueChange={(v) => setValue("supplierId", v)}>
-                      <SelectTrigger><SelectValue placeholder="Select supplier" /></SelectTrigger>
-                      <SelectContent>
-                        {suppliers.map((s: SupplierDto) => (
-                          <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <SearchableCombobox
+                      options={supplierCombo.options}
+                      value={watch("supplierId") ?? ""}
+                      onValueChange={(v) => setValue("supplierId", v)}
+                      onSearchChange={supplierCombo.setSearch}
+                      isLoading={supplierCombo.isLoading}
+                      placeholder="Select supplier"
+                      searchPlaceholder="Search suppliers..."
+                      emptyMessage="No suppliers found."
+                    />
                   </div>
                 )}
 
@@ -257,24 +251,30 @@ export default function LedgerPage() {
       <Card>
         <CardContent className="p-4">
           <div className="mb-4 flex flex-wrap items-center gap-3">
-            <Select value={filterCustomerId} onValueChange={(v) => { setFilterCustomerId(v === "all" ? "" : v); setFilterSupplierId(""); setPage(1); }}>
-              <SelectTrigger className="w-[200px]"><SelectValue placeholder="Filter by customer" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Customers</SelectItem>
-                {customers.map((c: CustomerDto) => (
-                  <SelectItem key={c.id} value={String(c.id)}>{c.fullName}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={filterSupplierId} onValueChange={(v) => { setFilterSupplierId(v === "all" ? "" : v); setFilterCustomerId(""); setPage(1); }}>
-              <SelectTrigger className="w-[200px]"><SelectValue placeholder="Filter by supplier" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Suppliers</SelectItem>
-                {suppliers.map((s: SupplierDto) => (
-                  <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="w-[220px]">
+              <SearchableCombobox
+                options={[{ value: "", label: "All Customers" }, ...customerCombo.options]}
+                value={filterCustomerId}
+                onValueChange={(v) => { setFilterCustomerId(v); setFilterSupplierId(""); setPage(1); }}
+                onSearchChange={customerCombo.setSearch}
+                isLoading={customerCombo.isLoading}
+                placeholder="Filter by customer"
+                searchPlaceholder="Search customers..."
+                emptyMessage="No customers found."
+              />
+            </div>
+            <div className="w-[220px]">
+              <SearchableCombobox
+                options={[{ value: "", label: "All Suppliers" }, ...supplierCombo.options]}
+                value={filterSupplierId}
+                onValueChange={(v) => { setFilterSupplierId(v); setFilterCustomerId(""); setPage(1); }}
+                onSearchChange={supplierCombo.setSearch}
+                isLoading={supplierCombo.isLoading}
+                placeholder="Filter by supplier"
+                searchPlaceholder="Search suppliers..."
+                emptyMessage="No suppliers found."
+              />
+            </div>
           </div>
 
           {isLoading ? (

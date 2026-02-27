@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,12 +14,17 @@ import {
   CheckCircle2,
   Clock,
   AlertTriangle,
+  ScanBarcode,
+  AlertCircle,
+  Lock,
+  Info,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -41,6 +46,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { purchaseOrdersApi } from "@/lib/api/purchase-orders";
+import { productsApi } from "@/lib/api/products";
 import type { PurchaseOrderItemDto } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -50,6 +56,7 @@ const STATUS_BADGE_CLASSES: Record<string, string> = {
   PartiallyReceived: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
   Received: "bg-green-500/15 text-green-600 dark:text-green-400",
   Cancelled: "bg-red-500/15 text-red-600 dark:text-red-400",
+  Closed: "bg-violet-500/15 text-violet-600 dark:text-violet-400",
 };
 
 function formatDate(dateStr: string) {
@@ -70,8 +77,16 @@ export default function PurchaseOrderDetailPage() {
   const id = Number(params.id);
   const [showReceiveForm, setShowReceiveForm] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [showCloseDialog, setShowCloseDialog] = useState(false);
+  const [closeReason, setCloseReason] = useState("");
   const [receiveQuantities, setReceiveQuantities] = useState<Record<number, number>>({});
   const [receiveError, setReceiveError] = useState<string | null>(null);
+  const [scanBarcode, setScanBarcode] = useState("");
+  const [isScanningReceive, setIsScanningReceive] = useState(false);
+  const [scanFeedback, setScanFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [highlightedProductId, setHighlightedProductId] = useState<number | null>(null);
+  const receiveScanRef = useRef<HTMLInputElement>(null);
+  const itemRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["purchase-orders", id],
@@ -83,8 +98,9 @@ export default function PurchaseOrderDetailPage() {
 
   const canSubmit = order?.status === "Draft";
   const canReceive = order?.status === "Submitted" || order?.status === "PartiallyReceived";
-  const canCancel = order?.status === "Draft" || order?.status === "Submitted" || order?.status === "PartiallyReceived";
-  const isTerminal = order?.status === "Received" || order?.status === "Cancelled";
+  const canCancel = order?.status === "Draft" || order?.status === "Submitted";
+  const canClose = order?.status === "PartiallyReceived";
+  const isTerminal = ["Received", "Cancelled", "Closed"].includes(order?.status ?? "");
 
   const invalidateAll = () => {
     queryClient.invalidateQueries({ queryKey: ["purchase-orders"] });
@@ -141,6 +157,25 @@ export default function PurchaseOrderDetailPage() {
     },
   });
 
+  const closeMutation = useMutation({
+    mutationFn: (data: { id: number; reason?: string }) =>
+      purchaseOrdersApi.close(data.id, { reason: data.reason }),
+    onSuccess: () => {
+      toast.success("Purchase order closed", {
+        description: "Ledger updated with received amount.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["purchase-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["purchase-orders", id] });
+      setShowCloseDialog(false);
+      setCloseReason("");
+    },
+    onError: (err: unknown) => {
+      toast.error("Failed to close order", {
+        description: err instanceof Error ? err.message : "Failed to close order.",
+      });
+    },
+  });
+
   const handleOpenReceiveForm = () => {
     if (!order) return;
     const defaults: Record<number, number> = {};
@@ -150,8 +185,98 @@ export default function PurchaseOrderDetailPage() {
     });
     setReceiveQuantities(defaults);
     setReceiveError(null);
+    setScanFeedback(null);
     setShowReceiveForm(true);
+    setTimeout(() => receiveScanRef.current?.focus(), 100);
   };
+
+  const handleReceiveScan = useCallback(
+    async (code: string) => {
+      const trimmed = code.trim();
+      if (!trimmed || !order) return;
+
+      setIsScanningReceive(true);
+      setScanFeedback(null);
+      setHighlightedProductId(null);
+
+      try {
+        const res = await productsApi.getByBarcode(trimmed);
+
+        if (!res.success || !res.data) {
+          setScanFeedback({ type: "error", message: res.message || "Product not found for this barcode." });
+          setScanBarcode("");
+          setIsScanningReceive(false);
+          setTimeout(() => receiveScanRef.current?.focus(), 50);
+          return;
+        }
+
+        const scanned = res.data;
+        const orderItem = order.items.find((i) => i.productId === scanned.productId);
+
+        if (!orderItem) {
+          setScanFeedback({
+            type: "error",
+            message: `"${scanned.productName}" is not in this purchase order.`,
+          });
+          setScanBarcode("");
+          setIsScanningReceive(false);
+          setTimeout(() => receiveScanRef.current?.focus(), 50);
+          return;
+        }
+
+        const remaining = orderItem.quantity - (orderItem.quantityReceived ?? 0);
+        if (remaining <= 0) {
+          setScanFeedback({
+            type: "error",
+            message: `"${scanned.productName}" has already been fully received.`,
+          });
+          setScanBarcode("");
+          setIsScanningReceive(false);
+          setTimeout(() => receiveScanRef.current?.focus(), 50);
+          return;
+        }
+
+        const currentQty = receiveQuantities[scanned.productId] ?? 0;
+        const newQty = Math.min(currentQty + 1, remaining);
+        setReceiveQuantities((prev) => ({
+          ...prev,
+          [scanned.productId]: newQty,
+        }));
+
+        setHighlightedProductId(scanned.productId);
+        setScanFeedback({
+          type: "success",
+          message: `${scanned.productName} — ${newQty} of ${remaining} remaining`,
+        });
+
+        setTimeout(() => {
+          itemRefs.current[scanned.productId]?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
+        }, 50);
+
+        setTimeout(() => setHighlightedProductId(null), 2000);
+      } catch {
+        setScanFeedback({ type: "error", message: "Failed to look up barcode." });
+      } finally {
+        setScanBarcode("");
+        setIsScanningReceive(false);
+        setTimeout(() => receiveScanRef.current?.focus(), 50);
+      }
+    },
+    [order, receiveQuantities]
+  );
+
+  const handleReceiveScanKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleReceiveScan(scanBarcode);
+      }
+    },
+    [scanBarcode, handleReceiveScan]
+  );
 
   const handleReceiveSubmit = () => {
     if (!order) return;
@@ -270,6 +395,18 @@ export default function PurchaseOrderDetailPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Due Date</p>
                 <p className="font-medium">{formatDate(order.dueDate)}</p>
+              </div>
+            )}
+            {order.receivedAmount > 0 && (
+              <div>
+                <p className="text-sm text-muted-foreground">Received Amount</p>
+                <p className="font-display text-lg font-semibold">{formatCurrency(order.receivedAmount)}</p>
+              </div>
+            )}
+            {order.status === "Closed" && order.closeReason && (
+              <div>
+                <p className="text-sm text-muted-foreground">Close Reason</p>
+                <p className="font-medium">{order.closeReason}</p>
               </div>
             )}
           </div>
@@ -415,6 +552,15 @@ export default function PurchaseOrderDetailPage() {
                     <XCircle className="h-4 w-4" /> Cancel Order
                   </Button>
                 )}
+                {canClose && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCloseDialog(true)}
+                    disabled={closeMutation.isPending}
+                  >
+                    <Lock className="h-4 w-4" /> Close Order
+                  </Button>
+                )}
               </div>
             )}
 
@@ -424,9 +570,61 @@ export default function PurchaseOrderDetailPage() {
                 <div>
                   <h3 className="font-display text-base font-semibold">Receive Items</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Enter the quantity received for each item in this batch.
-                    Only items with quantity &gt; 0 will be processed.
+                    Scan barcodes to increment quantities, or enter them manually below.
                   </p>
+                </div>
+
+                {/* Barcode scanner for receiving */}
+                <div className="rounded-lg border border-dashed bg-card p-4 space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <ScanBarcode className="h-4 w-4" />
+                    Scan to Receive
+                  </Label>
+                  <div className="relative">
+                    <ScanBarcode className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      ref={receiveScanRef}
+                      type="text"
+                      inputMode="none"
+                      value={scanBarcode}
+                      onChange={(e) => setScanBarcode(e.target.value)}
+                      onKeyDown={handleReceiveScanKeyDown}
+                      placeholder="Scan barcode to increment quantity..."
+                      className="pl-9 pr-10 font-mono tabular-nums"
+                      disabled={isScanningReceive}
+                      autoComplete="off"
+                    />
+                    {isScanningReceive && (
+                      <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+                    )}
+                  </div>
+
+                  {scanFeedback && (
+                    <div
+                      className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
+                        scanFeedback.type === "success"
+                          ? "bg-green-50/50 text-green-700 dark:bg-green-950/30 dark:text-green-400"
+                          : "bg-destructive/10 text-destructive"
+                      }`}
+                    >
+                      {scanFeedback.type === "success" ? (
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                      )}
+                      {scanFeedback.message}
+                    </div>
+                  )}
+
+                  <p className="text-xs text-muted-foreground">
+                    Each scan adds 1 to the item&apos;s receive quantity. Press <kbd className="rounded border bg-muted px-1 py-0.5 font-mono text-[10px]">Enter</kbd> after typing.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="text-xs text-muted-foreground">or adjust manually</span>
+                  <div className="h-px flex-1 bg-border" />
                 </div>
 
                 <div className="space-y-3">
@@ -434,12 +632,18 @@ export default function PurchaseOrderDetailPage() {
                     const received = item.quantityReceived ?? 0;
                     const remaining = item.quantity - received;
                     const isFullyReceived = remaining <= 0;
+                    const isHighlighted = highlightedProductId === item.productId;
 
                     return (
                       <div
                         key={item.id}
-                        className={`flex items-center gap-4 rounded-lg border p-3 ${
-                          isFullyReceived ? "bg-muted/50 opacity-60" : "bg-card"
+                        ref={(el) => { itemRefs.current[item.productId] = el; }}
+                        className={`flex items-center gap-4 rounded-lg border p-3 transition-all duration-300 ${
+                          isFullyReceived
+                            ? "bg-muted/50 opacity-60"
+                            : isHighlighted
+                              ? "border-green-400 bg-green-50/50 ring-2 ring-green-200 dark:border-green-700 dark:bg-green-950/30 dark:ring-green-800"
+                              : "bg-card"
                         }`}
                       >
                         <div className="flex-1 min-w-0">
@@ -495,6 +699,7 @@ export default function PurchaseOrderDetailPage() {
                     onClick={() => {
                       setShowReceiveForm(false);
                       setReceiveError(null);
+                      setScanFeedback(null);
                     }}
                     disabled={receiveMutation.isPending}
                   >
@@ -527,6 +732,32 @@ export default function PurchaseOrderDetailPage() {
                 </p>
               </>
             )}
+            {order.status === "Closed" && (
+              <>
+                <Lock className="h-5 w-5 text-violet-500" />
+                <p className="text-sm font-medium text-violet-600 dark:text-violet-400">
+                  This order has been closed. No further actions are available.
+                </p>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Closed order financial summary */}
+      {order.status === "Closed" && order.receivedAmount > 0 && (
+        <Card className="border-violet-200 dark:border-violet-800">
+          <CardContent className="flex items-start gap-3 py-5">
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-violet-500" />
+            <div className="text-sm">
+              <p className="font-medium text-violet-700 dark:text-violet-300">
+                This order was partially received and closed.
+              </p>
+              <p className="mt-1 text-muted-foreground">
+                Received: {formatCurrency(order.receivedAmount)} of {formatCurrency(order.totalAmount)}
+                {" "}({order.totalAmount > 0 ? Math.round((order.receivedAmount / order.totalAmount) * 100) : 0}% fulfilled)
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -540,11 +771,6 @@ export default function PurchaseOrderDetailPage() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to cancel order &quot;{order.orderNumber}&quot;?
-              {order.status === "PartiallyReceived" && (
-                <span className="mt-2 block font-medium text-amber-600">
-                  Warning: Some items have already been received. Cancelling will not reverse the inventory updates for received items.
-                </span>
-              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -555,6 +781,61 @@ export default function PurchaseOrderDetailPage() {
               disabled={cancelMutation.isPending}
             >
               {cancelMutation.isPending ? "Cancelling..." : "Cancel Order"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Close confirmation dialog */}
+      <AlertDialog
+        open={showCloseDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowCloseDialog(false);
+            setCloseReason("");
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-display">
+              Close Purchase Order?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  This will finalize the order with only the received items.
+                  A ledger entry of {formatCurrency(order.receivedAmount)} will be created
+                  (original total: {formatCurrency(order.totalAmount)}).
+                </p>
+                <div>
+                  <Label htmlFor="close-reason" className="text-sm font-medium">
+                    Reason (optional)
+                  </Label>
+                  <Textarea
+                    id="close-reason"
+                    placeholder="Reason for closing (optional)"
+                    value={closeReason}
+                    onChange={(e) => setCloseReason(e.target.value)}
+                    className="mt-1.5"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() =>
+                closeMutation.mutate({
+                  id,
+                  reason: closeReason.trim() || undefined,
+                })
+              }
+              disabled={closeMutation.isPending}
+            >
+              {closeMutation.isPending ? "Closing..." : "Close Order"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

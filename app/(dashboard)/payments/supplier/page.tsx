@@ -20,9 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { paymentsApi } from "@/lib/api/payments";
-import { suppliersApi } from "@/lib/api/suppliers";
-import type { SupplierDto } from "@/types";
+import { useSupplierCombo } from "@/hooks/use-combo-search";
 import { LedgerPaymentMethods } from "@/types";
 
 const schema = z.object({
@@ -55,11 +55,7 @@ export default function SupplierPaymentPage() {
 
   const paymentMethod = watch("paymentMethod");
 
-  const { data: suppliersResp } = useQuery({
-    queryKey: ["suppliers", "all"],
-    queryFn: () => suppliersApi.list({ page: 1, pageSize: 500 }),
-  });
-  const suppliers = suppliersResp?.success && suppliersResp?.data ? suppliersResp.data.items : [];
+  const supplierCombo = useSupplierCombo();
 
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
@@ -93,14 +89,16 @@ export default function SupplierPaymentPage() {
           <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-6">
             <div className="space-y-2">
               <Label>Supplier *</Label>
-              <Select value={watch("supplierId")} onValueChange={(v) => setValue("supplierId", v)}>
-                <SelectTrigger><SelectValue placeholder="Select supplier" /></SelectTrigger>
-                <SelectContent>
-                  {suppliers.map((s: SupplierDto) => (
-                    <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableCombobox
+                options={supplierCombo.options}
+                value={watch("supplierId")}
+                onValueChange={(v) => setValue("supplierId", v)}
+                onSearchChange={supplierCombo.setSearch}
+                isLoading={supplierCombo.isLoading}
+                placeholder="Select supplier"
+                searchPlaceholder="Search suppliers..."
+                emptyMessage="No suppliers found."
+              />
               {errors.supplierId && <p className="text-sm text-destructive">{errors.supplierId.message}</p>}
             </div>
 

@@ -36,16 +36,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { purchaseOrdersApi } from "@/lib/api/purchase-orders";
-import { suppliersApi } from "@/lib/api/suppliers";
-import type { PurchaseOrderDto, SupplierDto } from "@/types";
+import { useSupplierCombo } from "@/hooks/use-combo-search";
+import type { PurchaseOrderDto } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 
 const PAGE_SIZE = 10;
@@ -64,6 +58,7 @@ const STATUS_BADGE_CLASSES: Record<string, string> = {
   PartiallyReceived: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
   Received: "bg-green-500/15 text-green-600 dark:text-green-400",
   Cancelled: "bg-red-500/15 text-red-600 dark:text-red-400",
+  Closed: "bg-violet-500/15 text-violet-600 dark:text-violet-400",
 };
 
 function formatDate(dateStr: string) {
@@ -77,10 +72,7 @@ export default function PurchaseOrdersPage() {
   const [supplierId, setSupplierId] = useState<number | undefined>(undefined);
   const [cancelTarget, setCancelTarget] = useState<PurchaseOrderDto | null>(null);
 
-  const { data: suppliersResponse } = useQuery({
-    queryKey: ["suppliers", "all"],
-    queryFn: () => suppliersApi.list({ page: 1, pageSize: 500 }),
-  });
+  const supplierCombo = useSupplierCombo();
 
   const { data: response, isLoading } = useQuery({
     queryKey: ["purchase-orders", page, supplierId],
@@ -130,10 +122,6 @@ export default function PurchaseOrdersPage() {
   const pagedData = response?.success && response?.data ? response.data : null;
   const orders = pagedData?.items ?? [];
   const totalPages = pagedData?.totalPages ?? 0;
-  const suppliers =
-    suppliersResponse?.success && suppliersResponse?.data
-      ? suppliersResponse.data.items
-      : [];
 
   const handleCancelConfirm = () => {
     if (cancelTarget) {
@@ -159,25 +147,21 @@ export default function PurchaseOrdersPage() {
       <Card>
         <CardContent className="p-4">
           <div className="mb-4 flex items-center gap-2">
-            <Select
-              value={supplierId !== undefined ? String(supplierId) : "all"}
-              onValueChange={(v) => {
-                setSupplierId(v === "all" ? undefined : Number(v));
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="All suppliers" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All suppliers</SelectItem>
-                {suppliers.map((s: SupplierDto) => (
-                  <SelectItem key={s.id} value={String(s.id)}>
-                    {s.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="w-[220px]">
+              <SearchableCombobox
+                options={[{ value: "all", label: "All suppliers" }, ...supplierCombo.options]}
+                value={supplierId !== undefined ? String(supplierId) : "all"}
+                onValueChange={(v) => {
+                  setSupplierId(v === "all" || !v ? undefined : Number(v));
+                  setPage(1);
+                }}
+                onSearchChange={supplierCombo.setSearch}
+                isLoading={supplierCombo.isLoading}
+                placeholder="All suppliers"
+                searchPlaceholder="Search suppliers..."
+                emptyMessage="No suppliers found."
+              />
+            </div>
           </div>
 
           {isLoading ? (
@@ -269,8 +253,7 @@ export default function PurchaseOrdersPage() {
                             </Button>
                           )}
                           {(order.status === "Draft" ||
-                            order.status === "Submitted" ||
-                            order.status === "PartiallyReceived") && (
+                            order.status === "Submitted") && (
                             <Button
                               variant="ghost"
                               size="icon-sm"

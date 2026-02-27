@@ -20,10 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { creditDebitNotesApi } from "@/lib/api/credit-debit-notes";
-import { customersApi } from "@/lib/api/customers";
-import { suppliersApi } from "@/lib/api/suppliers";
-import type { CustomerDto, SupplierDto } from "@/types";
+import { useCustomerCombo, useSupplierCombo, useSaleCombo, usePurchaseOrderCombo } from "@/hooks/use-combo-search";
 import { NoteTypes, NoteAccountTypes } from "@/types";
 
 const schema = z.object({
@@ -59,16 +58,12 @@ export default function NewCreditDebitNotePage() {
 
   const accountType = watch("accountType");
 
-  const { data: customersResp } = useQuery({
-    queryKey: ["customers", "all"],
-    queryFn: () => customersApi.list({ page: 1, pageSize: 500 }),
-  });
-  const { data: suppliersResp } = useQuery({
-    queryKey: ["suppliers", "all"],
-    queryFn: () => suppliersApi.list({ page: 1, pageSize: 500 }),
-  });
-  const customers = customersResp?.success && customersResp?.data ? customersResp.data.items : [];
-  const suppliers = suppliersResp?.success && suppliersResp?.data ? suppliersResp.data.items : [];
+  const customerCombo = useCustomerCombo();
+  const supplierCombo = useSupplierCombo();
+  const selectedCustomerId = watch("customerId") ? Number(watch("customerId")) : null;
+  const selectedSupplierId = watch("supplierId") ? Number(watch("supplierId")) : null;
+  const saleCombo = useSaleCombo(selectedCustomerId, accountType === "0");
+  const poCombo = usePurchaseOrderCombo(selectedSupplierId, accountType === "1");
 
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
@@ -130,14 +125,16 @@ export default function NewCreditDebitNotePage() {
             {accountType === "0" && (
               <div className="space-y-2">
                 <Label>Customer *</Label>
-                <Select value={watch("customerId") ?? ""} onValueChange={(v) => setValue("customerId", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
-                  <SelectContent>
-                    {customers.map((c: CustomerDto) => (
-                      <SelectItem key={c.id} value={String(c.id)}>{c.fullName}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableCombobox
+                  options={customerCombo.options}
+                  value={watch("customerId") ?? ""}
+                  onValueChange={(v) => { setValue("customerId", v); setValue("saleId", ""); }}
+                  onSearchChange={customerCombo.setSearch}
+                  isLoading={customerCombo.isLoading}
+                  placeholder="Select customer"
+                  searchPlaceholder="Search customers..."
+                  emptyMessage="No customers found."
+                />
                 {errors.customerId && <p className="text-sm text-destructive">{errors.customerId.message}</p>}
               </div>
             )}
@@ -145,14 +142,16 @@ export default function NewCreditDebitNotePage() {
             {accountType === "1" && (
               <div className="space-y-2">
                 <Label>Supplier *</Label>
-                <Select value={watch("supplierId") ?? ""} onValueChange={(v) => setValue("supplierId", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select supplier" /></SelectTrigger>
-                  <SelectContent>
-                    {suppliers.map((s: SupplierDto) => (
-                      <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableCombobox
+                  options={supplierCombo.options}
+                  value={watch("supplierId") ?? ""}
+                  onValueChange={(v) => { setValue("supplierId", v); setValue("purchaseOrderId", ""); }}
+                  onSearchChange={supplierCombo.setSearch}
+                  isLoading={supplierCombo.isLoading}
+                  placeholder="Select supplier"
+                  searchPlaceholder="Search suppliers..."
+                  emptyMessage="No suppliers found."
+                />
                 {errors.supplierId && <p className="text-sm text-destructive">{errors.supplierId.message}</p>}
               </div>
             )}
@@ -170,14 +169,38 @@ export default function NewCreditDebitNotePage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Related Sale ID</Label>
-                <Input type="number" {...register("saleId")} placeholder="Optional" />
-              </div>
-              <div className="space-y-2">
-                <Label>Related PO ID</Label>
-                <Input type="number" {...register("purchaseOrderId")} placeholder="Optional" />
-              </div>
+              {accountType === "0" && selectedCustomerId && (
+                <div className="space-y-2">
+                  <Label>Related Sale</Label>
+                  <SearchableCombobox
+                    options={saleCombo.options}
+                    value={watch("saleId") ?? ""}
+                    onValueChange={(v) => setValue("saleId", v)}
+                    onSearchChange={saleCombo.setSearch}
+                    isLoading={saleCombo.isLoading}
+                    placeholder="Select sale (optional)"
+                    searchPlaceholder="Search sales..."
+                    emptyMessage="No sales found for this customer."
+                    clearable
+                  />
+                </div>
+              )}
+              {accountType === "1" && selectedSupplierId && (
+                <div className="space-y-2">
+                  <Label>Related Purchase Order</Label>
+                  <SearchableCombobox
+                    options={poCombo.options}
+                    value={watch("purchaseOrderId") ?? ""}
+                    onValueChange={(v) => setValue("purchaseOrderId", v)}
+                    onSearchChange={poCombo.setSearch}
+                    isLoading={poCombo.isLoading}
+                    placeholder="Select PO (optional)"
+                    searchPlaceholder="Search purchase orders..."
+                    emptyMessage="No POs found for this supplier."
+                    clearable
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex gap-4">

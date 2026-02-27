@@ -2,31 +2,26 @@
 
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Printer } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
+import { ProductImageUpload } from "@/components/shared/product-image-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { productsApi } from "@/lib/api/products";
-import { categoriesApi } from "@/lib/api/categories";
-import type { UpdateProductRequest, CategoryDto } from "@/types";
+import { useCategoryCombo } from "@/hooks/use-combo-search";
+import type { UpdateProductRequest } from "@/types";
 
 const updateProductSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -54,18 +49,11 @@ export default function EditProductPage() {
     enabled: !isNaN(id),
   });
 
-  const { data: categoriesResponse } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => categoriesApi.list(),
-  });
+  const categoryCombo = useCategoryCombo();
 
   const product =
     productResponse?.success && productResponse?.data ? productResponse.data : null;
   const productError = productResponse && !productResponse.success;
-  const categories =
-    categoriesResponse?.success && categoriesResponse?.data
-      ? categoriesResponse.data
-      : [];
 
   const {
     register,
@@ -125,6 +113,8 @@ export default function EditProductPage() {
     },
   });
 
+  const [isPrintingBarcode, setIsPrintingBarcode] = useState(false);
+
   const onSubmit = (data: UpdateProductFormValues) => {
     updateMutation.mutate({
       name: data.name,
@@ -139,51 +129,45 @@ export default function EditProductPage() {
     });
   };
 
+  const handlePrintBarcode = async () => {
+    setIsPrintingBarcode(true);
+    try {
+      await productsApi.printBarcodeLabels([id]);
+      toast.success("Barcode label PDF opened in a new tab.");
+    } catch {
+      toast.error("Failed to generate barcode label.");
+    } finally {
+      setIsPrintingBarcode(false);
+    }
+  };
+
   if (productLoading || (!product && !productError)) {
     return (
       <div className="space-y-6">
         <PageHeader title="Edit Product" description="Update product details" />
-        <div className="max-w-2xl">
+        <div className="grid gap-6 lg:grid-cols-2">
           <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-40" />
-            </CardHeader>
+            <CardHeader><Skeleton className="h-6 w-40" /></CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-16" />
-                <Skeleton className="h-9 w-full" />
-              </div>
+              <Skeleton className="h-9 w-full" />
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-12" />
-                  <Skeleton className="h-9 w-full" />
-                </div>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-9 w-full" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-24 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-9 w-full" />
                 <Skeleton className="h-9 w-full" />
               </div>
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-9 w-full" />
               <div className="grid gap-4 sm:grid-cols-3">
                 <Skeleton className="h-9 w-full" />
                 <Skeleton className="h-9 w-full" />
                 <Skeleton className="h-9 w-full" />
               </div>
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-24" />
-                <Skeleton className="h-6 w-12" />
-              </div>
             </CardContent>
-            <CardFooter>
-              <Skeleton className="h-9 w-32" />
-            </CardFooter>
+          </Card>
+          <Card>
+            <CardHeader><Skeleton className="h-6 w-24" /></CardHeader>
+            <CardContent>
+              <Skeleton className="aspect-square w-full rounded-lg" />
+            </CardContent>
           </Card>
         </div>
       </div>
@@ -218,7 +202,7 @@ export default function EditProductPage() {
         description="Update product details"
       />
 
-      <div className="max-w-2xl">
+      <div className="grid gap-6 lg:grid-cols-2">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Card>
             <CardHeader>
@@ -249,25 +233,24 @@ export default function EditProductPage() {
                 <Textarea
                   id="description"
                   placeholder="Product description"
-                  rows={4}
+                  rows={3}
                   {...register("description")}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="categoryId">Category</Label>
-                <Select value={categoryId} onValueChange={(v) => setValue("categoryId", v)}>
-                  <SelectTrigger id="categoryId" className="w-full">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat: CategoryDto) => (
-                      <SelectItem key={cat.id} value={String(cat.id)}>
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableCombobox
+                  options={categoryCombo.options}
+                  value={categoryId || ""}
+                  onValueChange={(v) => setValue("categoryId", v)}
+                  onSearchChange={categoryCombo.setSearch}
+                  isLoading={categoryCombo.isLoading}
+                  placeholder="Select category"
+                  searchPlaceholder="Search categories..."
+                  emptyMessage="No categories found."
+                  clearable
+                />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-3">
@@ -329,12 +312,25 @@ export default function EditProductPage() {
                 />
               </div>
             </CardContent>
-            <CardFooter className="flex gap-3 border-t pt-6">
+            <CardFooter className="flex flex-wrap gap-3 border-t pt-6">
               <Button type="submit" disabled={updateMutation.isPending}>
                 {updateMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 Save Changes
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePrintBarcode}
+                disabled={isPrintingBarcode}
+              >
+                {isPrintingBarcode ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Printer className="mr-2 h-4 w-4" />
+                )}
+                Print Barcode
               </Button>
               <Button variant="outline" asChild>
                 <Link href="/products">Cancel</Link>
@@ -342,6 +338,17 @@ export default function EditProductPage() {
             </CardFooter>
           </Card>
         </form>
+
+        <div className="lg:sticky lg:top-6 lg:self-start">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-display">Images</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProductImageUpload productId={id} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

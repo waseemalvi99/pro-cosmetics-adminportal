@@ -128,6 +128,31 @@ async function uploadFile<T>(path: string, formData: FormData): Promise<ApiRespo
   return data;
 }
 
+async function downloadBlob(path: string, body: unknown): Promise<Blob> {
+  const url = buildUrl(path);
+  const token = getToken();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "Download failed");
+    throw new Error(text);
+  }
+
+  return res.blob();
+}
+
 export const apiClient = {
   get: <T>(path: string, params?: Record<string, string | number | boolean | undefined>) =>
     request<T>(path, { params }),
@@ -143,4 +168,7 @@ export const apiClient = {
 
   upload: <T>(path: string, formData: FormData) =>
     uploadFile<T>(path, formData),
+
+  postBlob: (path: string, body: unknown) =>
+    downloadBlob(path, body),
 };

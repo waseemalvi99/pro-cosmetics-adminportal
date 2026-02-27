@@ -16,13 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,10 +38,9 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { paymentsApi } from "@/lib/api/payments";
-import { customersApi } from "@/lib/api/customers";
-import { suppliersApi } from "@/lib/api/suppliers";
+import { useCustomerCombo, useSupplierCombo } from "@/hooks/use-combo-search";
 import { formatCurrency } from "@/lib/utils";
-import type { PaymentDto, CustomerDto, SupplierDto } from "@/types";
+import type { PaymentDto } from "@/types";
 
 const PAGE_SIZE = 20;
 
@@ -69,18 +62,8 @@ export default function PaymentsPage() {
       }),
   });
 
-  const { data: customersResp } = useQuery({
-    queryKey: ["customers", "all"],
-    queryFn: () => customersApi.list({ page: 1, pageSize: 500 }),
-  });
-
-  const { data: suppliersResp } = useQuery({
-    queryKey: ["suppliers", "all"],
-    queryFn: () => suppliersApi.list({ page: 1, pageSize: 500 }),
-  });
-
-  const customers = customersResp?.success && customersResp?.data ? customersResp.data.items : [];
-  const suppliers = suppliersResp?.success && suppliersResp?.data ? suppliersResp.data.items : [];
+  const customerCombo = useCustomerCombo();
+  const supplierCombo = useSupplierCombo();
 
   const pagedData = response?.success && response?.data ? response.data : null;
   const payments = pagedData?.items ?? [];
@@ -134,24 +117,30 @@ export default function PaymentsPage() {
       <Card>
         <CardContent className="p-4">
           <div className="mb-4 flex flex-wrap items-center gap-3">
-            <Select value={filterCustomerId} onValueChange={(v) => { setFilterCustomerId(v === "all" ? "" : v); setFilterSupplierId(""); setPage(1); }}>
-              <SelectTrigger className="w-[200px]"><SelectValue placeholder="Filter by customer" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Customers</SelectItem>
-                {customers.map((c: CustomerDto) => (
-                  <SelectItem key={c.id} value={String(c.id)}>{c.fullName}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={filterSupplierId} onValueChange={(v) => { setFilterSupplierId(v === "all" ? "" : v); setFilterCustomerId(""); setPage(1); }}>
-              <SelectTrigger className="w-[200px]"><SelectValue placeholder="Filter by supplier" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Suppliers</SelectItem>
-                {suppliers.map((s: SupplierDto) => (
-                  <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="w-[220px]">
+              <SearchableCombobox
+                options={[{ value: "", label: "All Customers" }, ...customerCombo.options]}
+                value={filterCustomerId}
+                onValueChange={(v) => { setFilterCustomerId(v); setFilterSupplierId(""); setPage(1); }}
+                onSearchChange={customerCombo.setSearch}
+                isLoading={customerCombo.isLoading}
+                placeholder="Filter by customer"
+                searchPlaceholder="Search customers..."
+                emptyMessage="No customers found."
+              />
+            </div>
+            <div className="w-[220px]">
+              <SearchableCombobox
+                options={[{ value: "", label: "All Suppliers" }, ...supplierCombo.options]}
+                value={filterSupplierId}
+                onValueChange={(v) => { setFilterSupplierId(v); setFilterCustomerId(""); setPage(1); }}
+                onSearchChange={supplierCombo.setSearch}
+                isLoading={supplierCombo.isLoading}
+                placeholder="Filter by supplier"
+                searchPlaceholder="Search suppliers..."
+                emptyMessage="No suppliers found."
+              />
+            </div>
           </div>
 
           {isLoading ? (

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import { FileSpreadsheet } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
@@ -15,27 +14,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { customersApi } from "@/lib/api/customers";
-import { suppliersApi } from "@/lib/api/suppliers";
-import type { CustomerDto, SupplierDto } from "@/types";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
+import { useCustomerCombo, useSupplierCombo } from "@/hooks/use-combo-search";
 
 export default function AccountsPage() {
   const router = useRouter();
   const [accountType, setAccountType] = useState<"customer" | "supplier">("customer");
   const [selectedId, setSelectedId] = useState("");
 
-  const { data: customersResp } = useQuery({
-    queryKey: ["customers", "all"],
-    queryFn: () => customersApi.list({ page: 1, pageSize: 500 }),
-  });
-
-  const { data: suppliersResp } = useQuery({
-    queryKey: ["suppliers", "all"],
-    queryFn: () => suppliersApi.list({ page: 1, pageSize: 500 }),
-  });
-
-  const customers = customersResp?.success && customersResp?.data ? customersResp.data.items : [];
-  const suppliers = suppliersResp?.success && suppliersResp?.data ? suppliersResp.data.items : [];
+  const customerCombo = useCustomerCombo();
+  const supplierCombo = useSupplierCombo();
 
   const handleViewStatement = () => {
     if (!selectedId) return;
@@ -75,24 +63,29 @@ export default function AccountsPage() {
 
           <div className="space-y-2">
             <Label>{accountType === "customer" ? "Customer" : "Supplier"}</Label>
-            <Select value={selectedId} onValueChange={setSelectedId}>
-              <SelectTrigger>
-                <SelectValue placeholder={`Select ${accountType}...`} />
-              </SelectTrigger>
-              <SelectContent>
-                {accountType === "customer"
-                  ? customers.map((c: CustomerDto) => (
-                      <SelectItem key={c.id} value={String(c.id)}>
-                        {c.fullName}
-                      </SelectItem>
-                    ))
-                  : suppliers.map((s: SupplierDto) => (
-                      <SelectItem key={s.id} value={String(s.id)}>
-                        {s.name}
-                      </SelectItem>
-                    ))}
-              </SelectContent>
-            </Select>
+            {accountType === "customer" ? (
+              <SearchableCombobox
+                options={customerCombo.options}
+                value={selectedId}
+                onValueChange={setSelectedId}
+                onSearchChange={customerCombo.setSearch}
+                isLoading={customerCombo.isLoading}
+                placeholder="Select customer..."
+                searchPlaceholder="Search customers..."
+                emptyMessage="No customers found."
+              />
+            ) : (
+              <SearchableCombobox
+                options={supplierCombo.options}
+                value={selectedId}
+                onValueChange={setSelectedId}
+                onSearchChange={supplierCombo.setSearch}
+                isLoading={supplierCombo.isLoading}
+                placeholder="Select supplier..."
+                searchPlaceholder="Search suppliers..."
+                emptyMessage="No suppliers found."
+              />
+            )}
           </div>
 
           <Button onClick={handleViewStatement} disabled={!selectedId} className="w-full">
