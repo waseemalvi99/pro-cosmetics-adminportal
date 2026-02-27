@@ -41,6 +41,12 @@ export interface RegisterRequest {
   roleName?: string;
 }
 
+export interface CreateUserRequest {
+  fullName: string;
+  email: string;
+  roleName?: string | null;
+}
+
 export interface RefreshTokenRequest {
   token: string;
   refreshToken: string;
@@ -55,6 +61,26 @@ export interface UserDto {
   roles: string[];
   permissions: string[];
   createdAt: string;
+  profilePicture: string | null;
+}
+
+export interface UpdateProfileRequest {
+  fullName: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  token: string;
+  newPassword: string;
 }
 
 export interface AssignRoleRequest {

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { MoreHorizontal, Search } from "lucide-react";
+import { MoreHorizontal, Plus, Search } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,12 +42,14 @@ import {
 } from "@/components/ui/pagination";
 import { usersApi } from "@/lib/api/users";
 import { useRoleCombo } from "@/hooks/use-combo-search";
+import { useAuth } from "@/contexts/auth-context";
 import type { UserDto } from "@/types";
 
 const PAGE_SIZE = 10;
 
 export default function UsersPage() {
   const queryClient = useQueryClient();
+  const { user: currentUser, hasPermission } = useAuth();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
@@ -106,6 +109,16 @@ export default function UsersPage() {
       <PageHeader
         title="Users"
         description="Manage user accounts and access"
+        action={
+          hasPermission("UserManagement:Create") ? (
+            <Button asChild>
+              <Link href="/users/new">
+                <Plus className="mr-2 h-4 w-4" />
+                Create User
+              </Link>
+            </Button>
+          ) : undefined
+        }
       />
 
       <Card>
@@ -234,9 +247,16 @@ export default function UsersPage() {
                                 onClick={() =>
                                   toggleActiveMutation.mutate(user.id)
                                 }
-                                disabled={toggleActiveMutation.isPending}
+                                disabled={
+                                  toggleActiveMutation.isPending ||
+                                  user.id === currentUser?.id
+                                }
                               >
-                                {user.isActive ? "Deactivate" : "Activate"}
+                                {user.id === currentUser?.id
+                                  ? "Cannot toggle own account"
+                                  : user.isActive
+                                    ? "Deactivate"
+                                    : "Activate"}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>

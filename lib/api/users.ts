@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api-client";
-import type { PagedResult, UserDto, AssignRoleRequest } from "@/types";
+import type { PagedResult, UserDto, AssignRoleRequest, CreateUserRequest } from "@/types";
 
 export const usersApi = {
   list: (params?: { page?: number; pageSize?: number; search?: string }) =>
@@ -7,6 +7,9 @@ export const usersApi = {
 
   getById: (id: number) =>
     apiClient.get<UserDto>(`/api/users/${id}`),
+
+  register: (data: CreateUserRequest) =>
+    apiClient.post<UserDto>("/api/users/register", data),
 
   assignRole: (id: number, data: AssignRoleRequest) =>
     apiClient.post<void>(`/api/users/${id}/assign-role`, data),

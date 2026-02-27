@@ -13,6 +13,7 @@ interface AuthContextType {
   login: (data: LoginRequest) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   hasPermission: (permission: string) => boolean;
+  updateUser: (data: Partial<UserDto>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -63,6 +64,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user]
   );
 
+  const updateUser = useCallback(
+    (data: Partial<UserDto>) => {
+      setUser((prev) => {
+        if (!prev) return prev;
+        const updated = { ...prev, ...data };
+        localStorage.setItem("user", JSON.stringify(updated));
+        return updated;
+      });
+    },
+    []
+  );
+
   return (
     <AuthContext.Provider
       value={{
@@ -72,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         hasPermission,
+        updateUser,
       }}
     >
       {children}

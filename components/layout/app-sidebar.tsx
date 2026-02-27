@@ -26,6 +26,7 @@ import {
   FileSpreadsheet,
   Clock,
   Mail,
+  UserCircle,
 } from "lucide-react";
 import {
   Sidebar,
@@ -44,7 +45,17 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/auth-context";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5089";
+
+function getProfilePictureUrl(profilePicture: string | null | undefined): string | undefined {
+  if (!profilePicture) return undefined;
+  if (profilePicture.startsWith("http")) return profilePicture;
+  if (profilePicture.startsWith("/")) return `${API_BASE_URL}${profilePicture}`;
+  return `${API_BASE_URL}/uploads/profiles/${profilePicture}`;
+}
 
 const navigation = [
   {
@@ -181,9 +192,16 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t border-sidebar-border p-3">
         <div className="flex items-center gap-3 rounded-lg px-2 py-2 group-data-[collapsible=icon]:justify-center">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/20 text-xs font-semibold text-sidebar-primary">
-            {user?.fullName?.charAt(0) || "A"}
-          </div>
+          <Link href="/profile" className="shrink-0">
+            <Avatar className="h-8 w-8 ring-1 ring-sidebar-border transition-opacity hover:opacity-80">
+              {getProfilePictureUrl(user?.profilePicture) ? (
+                <AvatarImage src={getProfilePictureUrl(user?.profilePicture)} alt={user?.fullName || "Profile"} />
+              ) : null}
+              <AvatarFallback className="bg-sidebar-primary/20 text-xs font-semibold text-sidebar-primary">
+                {user?.fullName?.charAt(0) || "A"}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
           <div className="flex flex-1 flex-col group-data-[collapsible=icon]:hidden">
             <span className="truncate text-xs font-medium text-sidebar-foreground">
               {user?.fullName || "Admin"}
@@ -192,13 +210,22 @@ export function AppSidebar() {
               {user?.email || "admin@example.com"}
             </span>
           </div>
-          <button
-            onClick={logout}
-            className="rounded-md p-1.5 text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground group-data-[collapsible=icon]:hidden"
-            title="Sign out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-0.5 group-data-[collapsible=icon]:hidden">
+            <Link
+              href="/profile"
+              className="rounded-md p-1.5 text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              title="My Profile"
+            >
+              <UserCircle className="h-4 w-4" />
+            </Link>
+            <button
+              onClick={logout}
+              className="rounded-md p-1.5 text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              title="Sign out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </SidebarFooter>
     </Sidebar>

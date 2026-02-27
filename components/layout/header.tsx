@@ -3,10 +3,19 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Bell, ChevronRight } from "lucide-react";
+import { Bell, ChevronRight, UserCircle, LogOut } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,6 +24,16 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useAuth } from "@/contexts/auth-context";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5089";
+
+function getProfilePictureUrl(profilePicture: string | null | undefined): string | undefined {
+  if (!profilePicture) return undefined;
+  if (profilePicture.startsWith("http")) return profilePicture;
+  if (profilePicture.startsWith("/")) return `${API_BASE_URL}${profilePicture}`;
+  return `${API_BASE_URL}/uploads/profiles/${profilePicture}`;
+}
 
 const routeLabels: Record<string, string> = {
   "": "Dashboard",
@@ -41,10 +60,21 @@ const routeLabels: Record<string, string> = {
   supplier: "Supplier",
   new: "New",
   edit: "Edit",
+  profile: "My Profile",
+  "forgot-password": "Forgot Password",
+  "reset-password": "Reset Password",
 };
 
 export function Header() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
+  const profilePicUrl = getProfilePictureUrl(user?.profilePicture);
+  const initials = user?.fullName
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "?";
   const segments = pathname.split("/").filter(Boolean);
 
   const breadcrumbs = segments.map((segment, index) => {
@@ -94,12 +124,44 @@ export function Header() {
         </Breadcrumb>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         <Button variant="ghost" size="icon" asChild className="relative h-9 w-9 text-muted-foreground hover:text-foreground">
           <Link href="/notifications">
             <Bell className="h-4 w-4" />
           </Link>
         </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-accent focus:outline-none">
+              <Avatar className="h-7 w-7">
+                {profilePicUrl ? <AvatarImage src={profilePicUrl} alt={user?.fullName || "Profile"} /> : null}
+                <AvatarFallback className="bg-primary/10 text-[11px] font-semibold text-primary">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <span className="hidden text-sm font-medium md:inline-block">{user?.fullName?.split(" ")[0]}</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel className="pb-0 font-normal">
+              <p className="text-sm font-medium">{user?.fullName}</p>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/profile" className="flex items-center gap-2">
+                <UserCircle className="h-4 w-4" />
+                My Profile
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={logout} className="flex items-center gap-2 text-destructive focus:text-destructive">
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
